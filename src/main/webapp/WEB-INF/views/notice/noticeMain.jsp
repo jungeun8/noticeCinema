@@ -85,7 +85,7 @@
 					<div style="text-align: right;">
 						<button type="button" class="btn btn-warning" onclick="location.href='add'">글쓰기</button>
 					</div>	
-					<div style="margin-left: 40%; margin-top: 15px;"> 
+					<div style="margin-left: 30%; margin-top: 15px;"> 
 						<nav aria-label="Page navigation example">
 		 					<ul class="pagination" >
 		 					<% 
@@ -104,13 +104,14 @@
 						  	 	 /* 	int startPage = ((nowPage/5)*5)+1; // 첫번째 페이지 계산 */
 									for(int i=startPage; i<startPage+5; i++){ 
 								%>
-									<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=i%>&searchWord=<%=searchWord%>"><%=i%></a></li>
+									<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=i%>&searchWord=<%=searchWord%>"><%=i-1%></a></li>
 								<%
 								if(i>pageAllCnt123) break;	// 만약에 총페이지 수보다 커지면 중지
 									}
+						  	 	
 								%>
 		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=startPage+6 %>&searchWord=<%=searchWord %>" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li> 
-		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=(int)Math.ceil(pageAllCnt123/5)*5 %>&searchWord=<%=searchWord %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=(int)(Math.ceil(pageAllCnt123*5)/5) %>&searchWord=<%=searchWord %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
 		  					</ul>
 						</nav>
 					</div>
