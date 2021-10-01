@@ -29,23 +29,25 @@
 				<div class="mb-3">
 		 			<label for="exampleFormControlInput1" class="form-label">제목</label>
 		  			<input type="text" class="form-control" id="title" name="title">
-		  			<p id="textCount" name="textCount">글자수</p>
+		  			<p id="textCount" name="textCount">(0 / 최대 20자)</p>
 				</div>
 				<div class="mb-3">
 				  <label for="exampleFormControlTextarea1" class="form-label">내용</label>
 				  <textarea class="form-control" id="content" name ="content" rows="3"></textarea>
-				  <p id="textCount1" name="textCount1">글자수</p>
+				  <p id="textCount1" name="textCount1">(0 / 최대 1000자)</p>
 				</div>
-				<h5 class="mb-3">고객정보(*필수입력사항입니다)</h5>
+				<h5 class="mb-3">고객정보(필수입력사항입니다)</h5>
 				          <div class="row g-5" style="background: #f5f5f5;">
 				            <div class="col-sm-6">
 				            	<div class="form-floating mb-3">
   									<input type="text" class="form-control" id="noticeId" name="noticeId" placeholder="">
-  									<label for="floatingInput">아이디</label>
+  									<label for="floatingInput">작성자</label>
+  									<p>**공백없이 4자리까지 작성해주세요</p>
 								</div>
 								<div class="form-floating">
  									 <input type="password" class="form-control" id="noitcePwd" name="noitcePwd" placeholder="">
  									 <label for="floatingPassword">비밀번호</label>
+ 									 <p>**6~10자리로 공백없이 영문,숫자,특수문자를 포함해주세요</p>
 								</div>
 				           </div>
 						</div>
@@ -68,28 +70,49 @@ $(function() {
 			alert("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
+		}else if(title.trim() == ""){
+			 alert("제목을 입력해주세요!!");
+	    	  return false;
 		}
 		var content = $("#content").val();
 		if (!content) {
 			alert("내용을 입력해주세요.");
 			$("#content").focus();
 			return false;
+		}else if(content ==""){
+			 alert("내용을 입력해주세요!!");
+	    	  return false;
 		}
 		var noticeId = $("#noticeId").val();
-		if(noticeId==""){
-	        alert("아이디를 입력해주세요.");
+		if(noticeId ==""){
+	        alert("작성자를 입력해주세요.");
 	        $("#noticeId").focus();
 	        return false;
+		}else if(noticeId.length>5){
+	    	 alert("작성자는 4자리 이내로 입력해주세요");
+	    	 return false;
+		}else if(noticeId.search(/\s/) != -1){
+	    	  alert("작성자는 공백 없이 입력해주세요.");
+	    	  return false;
 		}
 	     var noitcePwd = $("#noitcePwd").val();
+	     var num = noitcePwd.search(/[0-9]/g);
+	     var eng = noitcePwd.search(/[a-z]/ig);
+	     var spe = noitcePwd.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
 	     if(noitcePwd==""){
 	        alert("비밀번호를 입력해주세요.");
 	        $("#noitcePwd").focus();
 	        return false;
-	     }else if(noitcePwd.length<4 || noitcePwd.length>8){
-	    	 alert("비밀번호는 4자리에서 8자리 이내로 입력해주세요");
-	    	 return false;
-	     }
+	     }else if(noitcePwd.length<6 || noitcePwd.length>10){
+	    	 alert("비밀번호는 6자리에서 10자리 이내로 입력해주세요");
+	    	 return false; 
+	     }else if(noitcePwd.search(/\s/) != -1){
+	    	  alert("비밀번호는 공백 없이 입력해주세요.");
+	    	  return false;
+	     }else if(num < 0 || eng < 0 || spe < 0){
+	    	  alert("영문,숫자, 특수문자를 혼합하여 입력해주세요.");
+	    	  return false;
+	    	 }
 		return true;
 		
 	});
@@ -97,11 +120,11 @@ $(function() {
 
 $("#title").keyup(function(e) {
       var content = $(this).val();
-      $("#textCount").text("(" + content.length + "/ 80)"); //실시간 글자수 카운팅 */ 
-      if (content.length > 80) {
-    	  alert("최대 80자까지 입력 가능합니다.");
-         $(this).val(content.substring(0, 80));
-         $('#textCount').text("(80 / 최대 80자)");
+      $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅 */ 
+      if (content.length > 20) {
+    	  alert("최대 20자까지 입력 가능합니다.");
+         $(this).val(content.substring(0, 20));
+         $('#textCount').text("(20 / 최대 20자)");
 
         
       }
@@ -109,11 +132,11 @@ $("#title").keyup(function(e) {
 
 $("#content").keyup(function(e) {
    var content1 = $(this).val();
-   $("#textCount1").text("(" + content1.length + "/ 1200)"); //실시간 글자수 카운팅 */
-   if (content.length > 1200) {
- 	  alert("최대 1200자까지 입력 가능합니다.");
-      $(this).val(content.substring(0, 1200));
-      $('#textCount1').text("(1200 / 최대 1200자)");
+   $("#textCount1").text("(" + content1.length + "/ 1000자)"); //실시간 글자수 카운팅 */
+   if (content1.length > 1000) {
+ 	  alert("최대 1000자까지 입력 가능합니다.");
+      $(this).val(content1.substring(0, 1000));
+      $('#textCount1').text("(1000 / 최대 1000자)");
    }
 });
 

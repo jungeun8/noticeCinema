@@ -23,14 +23,15 @@
 		        notice_hits				hits,
 		        notice_id				noticeId,
 		        notice_pwd				noitcePwd,
-		        ROW_NUMBER() OVER (order by notice_no desc) num
+		        ROW_NUMBER() OVER (order by notice_no desc) numno,
+		        ROW_NUMBER() OVER (order by notice_date) num
 		    from
 		    	cinemabox_notice
 			 where 
 			    notice_title like '%${searchWord}%' 
 			order by notice_date desc )
-		where num between ${startPage} and ${endPage}
-		
+		where numno between ${startPage} and ${endPage}
+	
 	</select>
 	
 	<select id="getPageAllCnt" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="int">
