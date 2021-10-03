@@ -71,7 +71,7 @@ $(function() {
 			$("#title").focus();
 			return false;
 		}else if(title.trim() == ""){
-			 alert("제목을 입력해주세요!!");
+			 alert("제목을 공백없이 입력해주세요!!");
 	    	  return false;
 		}
 		var content = $("#content").val();
@@ -79,8 +79,8 @@ $(function() {
 			alert("내용을 입력해주세요.");
 			$("#content").focus();
 			return false;
-		}else if(content ==""){
-			 alert("내용을 입력해주세요!!");
+		}else if(content.trim() ==""){
+			 alert("내용을 공백없이 입력해주세요!!");
 	    	  return false;
 		}
 		var noticeId = $("#noticeId").val();
@@ -118,25 +118,36 @@ $(function() {
 	});
 })
 
+ $("#title").keydown(function(e) {
+      var content = $(this).val();
+      $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅
+   }); 
+
 $("#title").keyup(function(e) {
       var content = $(this).val();
       $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅 */ 
       if (content.length > 20) {
-    	  alert("최대 20자까지 입력 가능합니다.");
-         $(this).val(content.substring(0, 20));
-         $('#textCount').text("(20 / 최대 20자)");
-
-        
+    	if( !alert("최대 20자까지 입력 가능합니다. (현재 글자수 : "+ content.length+")")){
+    		$(this).val(content.substring(0, 20));
+            $('#textCount').text("(20 / 최대 20자)");
+    	}
       }
    });
+   
+$("#content").keydown(function(e) {
+    var content1 = $(this).val();
+    $("#textCount1").text("(" + content1.length + "/ 1000자)"); //실시간 글자수 카운팅 */
+ }); 
+   
 
 $("#content").keyup(function(e) {
    var content1 = $(this).val();
    $("#textCount1").text("(" + content1.length + "/ 1000자)"); //실시간 글자수 카운팅 */
    if (content1.length > 1000) {
- 	  alert("최대 1000자까지 입력 가능합니다.");
+	   if( !alert("최대 1000자까지 입력 가능합니다. (현재 글자수 : "+ content1.length+")")){
       $(this).val(content1.substring(0, 1000));
       $('#textCount1').text("(1000 / 최대 1000자)");
+	   }
    }
 });
 

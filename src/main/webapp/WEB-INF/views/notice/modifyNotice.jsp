@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -29,12 +30,12 @@
 				<div class="mb-3">
 				  <label for="exampleFormControlInput1" class="form-label">제목</label>
 				  <input type="text" class="form-control" id="title" name="title" value="${noticeDetail.title }"/>
-				  <p id="textCount" name="textCount">글자수</p>
+				  <p id="textCount" name="textCount">(${fn:length(noticeDetail.title) } / 최대 20자)</p>
 				</div>
 				<div class="mb-3">
 				  <label for="exampleFormControlTextarea1" class="form-label">내용</label>
 				   <textarea class="form-control" id="content" name ="content" rows="3">${noticeDetail.content }</textarea>
-				    <p id="textCount1" name="textCount1">글자수</p>
+				    <p id="textCount1" name="textCount1">(${fn:length(noticeDetail.content) } / 최대 20자)</p>
 				  <input type="hidden" name="no" id="no" value="${noticeDetail.no }"> 
 				</div>
 				<div style="text-align: right;">
@@ -55,17 +56,17 @@ $(function() {
 			alert("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else if(title.search(/\s/) != -1){
-			 alert("제목에 공백 없이 입력해주세요.");
+		}else if(title.trim() == ""){
+			 alert("제목을 공백없이 입력해주세요!!");
 	    	  return false;
-	    }
+		}
 		var content = $("#content").val();
 		if (!content) {
 			alert("내용을 입력해주세요.");
 			$("#content").focus();
 			return false;
-		}else if(content.search(/\s/) != -1){
-			 alert("내용에 공백 없이 입력해주세요.");
+		}else if(content.trim() ==""){
+			 alert("내용을 공백없이 입력해주세요!!");
 	    	  return false;
 		}
 		return true;
@@ -73,27 +74,39 @@ $(function() {
 	});
 })
 
+ $("#title").keydown(function(e) {
+      var content = $(this).val();
+      $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅
+   }); 
+
 $("#title").keyup(function(e) {
-    var content = $(this).val();
-    $("#textCount").text("(" + content.length + "/ 50자)"); //실시간 글자수 카운팅 */ 
-    if (content.length > 50) {
-  	  alert("최대 50자까지 입력 가능합니다.");
-       $(this).val(content.substring(0, 80));
-       $('#textCount').text("(50 / 최대 50자)");
-		return false;
-    }
-    return true;
- });
+      var content = $(this).val();
+      $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅 */ 
+      if (content.length > 20) {
+    	if( !alert("최대 20자까지 입력 가능합니다. (현재 글자수 : "+ content.length+")")){
+    		$(this).val(content.substring(0, 20));
+            $('#textCount').text("(20 / 최대 20자)");
+    	}
+      }
+   });
+   
+$("#content").keydown(function(e) {
+    var content1 = $(this).val();
+    $("#textCount1").text("(" + content1.length + "/ 1000자)"); //실시간 글자수 카운팅 */
+ }); 
+   
 
 $("#content").keyup(function(e) {
- var content1 = $(this).val();
- $("#textCount1").text("(" + content1.length + "/ 1000자)"); //실시간 글자수 카운팅 */
- if (content1.length > 1000) {
-	  alert("최대 1000자까지 입력 가능합니다.");
-    $(this).val(content1.substring(0, 1200));
-    $('#textCount1').text("(1000 / 최대 1000자)");
- }
+   var content1 = $(this).val();
+   $("#textCount1").text("(" + content1.length + "/ 1000자)"); //실시간 글자수 카운팅 */
+   if (content1.length > 1000) {
+	   if( !alert("최대 1000자까지 입력 가능합니다. (현재 글자수 : "+ content1.length+")")){
+      $(this).val(content1.substring(0, 1000));
+      $('#textCount1').text("(1000 / 최대 1000자)");
+	   }
+   }
 });
+
 		
 </script>
 </body>

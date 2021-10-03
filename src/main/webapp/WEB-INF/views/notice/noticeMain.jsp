@@ -79,9 +79,9 @@
 									<tr class="text-center">
 										<input type="hidden" name=noticeNo id="noticeNo" value="${noticeList.no }"/>
 										<td>${noticeList.num }</td>
-										<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }"><xmp>${noticeList.title}</xmp></a></td>
+										<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/></pre></a></td>
 										<td><fmt:formatDate value="${noticeList.creatDate }" pattern="yyyy.MM.dd"/></td>
-										<td>${noticeList.noticeId }</td>
+										<td><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.noticeId }"/></pre></td>
 										<td class="text-end">${noticeList.hits }</td>
 									</tr>
 								</c:forEach>
@@ -101,7 +101,7 @@
 		 					int startPage = (((nowPage-1)/5)*5)+1; // 첫번째 페이지 계산
 		 					%>
 		 					<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=1&searchWord=<%=searchWord%>"  aria-label="firstPrevious"><span aria-hidden="true">처음</span></a></li>
-							<li class="page-item"><a class="page-link" href="../notice/list?page=<%=startPage-5 %>&searchWord=<%=searchWord%>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+							<li class="page-item"><a class="page-link" href="../notice/list?page=<%=startPage-5<1?1:startPage-5 %>&searchWord=<%=searchWord%>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
 						  	 	<% 
 						  	 		/* int firstPage = (int)request.getAttribute("startPage"); */
 									/* int pageAllCnt123 =(int)request.getAttribute("pageAllCnt");	// 총페이지 */
@@ -109,14 +109,22 @@
 						  	 	 /* 	String searchWord = (String)request.getAttribute("searchWord"); */
 						  	 	 /* 	int startPage = ((nowPage/5)*5)+1; // 첫번째 페이지 계산 */
 									for(int i=startPage; i<startPage+5; i++){ 
-								%>
-									<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=i%>&searchWord=<%=searchWord%>"><%=i%></a></li>
-								<%
-								if(i>pageAllCnt123) break;	// 만약에 총페이지 수보다 커지면 중지
+										if(i>pageAllCnt123) break;	// 만약에 총페이지 수보다 커지면 중지
+										if(nowPage==i){
+											%>
+											<li class="page-item" id="paging"><a class="page-link" style="background-color:#ffc007" href="../notice/list?page=<%=i%>&searchWord=<%=searchWord%>"><%=i%></a></li>
+											<%
+										}else{
+											%>
+											<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=i%>&searchWord=<%=searchWord%>"><%=i%></a></li>
+											<%
+										}
 									}
 								%>
-								<% if((( (nowPage-1)/5 ) *5 )+5<=(int)(Math.ceil(pageAllCnt123*5)/5)){ // 맨 마지막 페이지가 화면에 보여지는 마지막 페이지보다 클 경우에만 보이도록 %> 
-		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=startPage+5 %>&searchWord=<%=searchWord %>" aria-label="Next"><span aria-hidden="true">
+								<% System.out.println("nowPage : " + nowPage); %>
+								<% System.out.println("pageAllCnt123 : " + pageAllCnt123); %>
+								<% if((( (nowPage-1)/5 ) *5 )+5 < pageAllCnt123){ // 맨 마지막 페이지가 화면에 보여지는 마지막 페이지보다 클 경우에만 보이도록 %> 
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=startPage+5>pageAllCnt123?pageAllCnt123:startPage+5 %>&searchWord=<%=searchWord %>" aria-label="Next"><span aria-hidden="true">
 		    				&raquo;
 		    				</span></a></li> <% } %>
 		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=(int)(Math.ceil(pageAllCnt123*5)/5) %>&searchWord=<%=searchWord %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
