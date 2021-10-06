@@ -18,5 +18,7 @@ public class NoticeDetailDto {
 	private String nextTitle;
 	private String preNo;
 	private String preTitle;
+	private String noticeId;
+	private String noitcePwd;
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
+import com.cinemabox.dto.Question.QuestionDto;
 import com.cinemabox.vo.Notice;
 
 public interface NoticeDao {
@@ -21,6 +22,12 @@ public interface NoticeDao {
 	 * @return
 	 */
 	NoticeDetailDto getDetailNoticeByNo(int no);
+	
+	/**
+	 * 수정사항
+	 * @return
+	 */
+	Notice getModifyNotice(Notice modifyNotice);
 	
 	/**
 	 * 공지하기 
@@ -58,6 +65,13 @@ public interface NoticeDao {
 	 * @return
 	 */
 	int getPageAllCnt(NoticeListDto searchData);
+	
+	/**
+	 * 이름과 비밀번호를 이용하여 등록된 공지글을 조회함
+	 * @param param
+	 * @return
+	 */
+	int getNoticeCountByName(Notice param);
 
 
 }

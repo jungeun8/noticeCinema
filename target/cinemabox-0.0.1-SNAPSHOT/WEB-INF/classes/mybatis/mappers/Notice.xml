@@ -6,11 +6,14 @@
 
 	<select id="getNoticeAll" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="com.cinemabox.vo.Notice">
 		select 
+			num,
 		    no,
 		    division,
 		    title,
 		    creatDate,
-		    hits
+		    hits,
+		    noticeId,
+		    noitcePwd
 		from (
 		    select 
 		        notice_no				no,
@@ -18,13 +21,17 @@
 		        notice_title			title,
 		        notice_date				creatDate,
 		        notice_hits				hits,
-		        ROW_NUMBER() OVER (order by notice_no desc) num
+		        notice_id				noticeId,
+		        notice_pwd				noitcePwd,
+		        ROW_NUMBER() OVER (order by notice_no desc) numno,
+		        ROW_NUMBER() OVER (order by notice_date) num
 		    from
 		    	cinemabox_notice
 			 where 
 			    notice_title like '%${searchWord}%' 
 			order by notice_date desc )
-		where num between ${startPage} and ${endPage}
+		where numno between ${startPage} and ${endPage}
+	
 	</select>
 	
 	<select id="getPageAllCnt" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="int">
@@ -38,11 +45,11 @@
 	
 	<select id="noticeMain" resultType="com.cinemabox.vo.Notice">
 		select
-        notice_no				no,
-        notice_division			division,
-        notice_title			title,
-        notice_date				creatDate,
-        notice_hits				hits   
+	        notice_no				no,
+	        notice_division			division,
+	        notice_title			title,
+	        notice_date				creatDate,
+	        notice_hits				hits   
 		from(select * from cinemabox_notice order by notice_date desc)
 		where ROWNUM &lt;= 4
 	</select> 
@@ -70,9 +77,9 @@
 
 	<insert id="insertNotice" parameterType="com.cinemabox.dto.Notice.NoticeDto">
 		insert into cinemabox_notice
-		(notice_no, notice_division, notice_title, notice_content, notice_date)
+		(notice_no, notice_division, notice_title, notice_content, notice_date, notice_id, notice_pwd)
 		values
-		(notice_seq.nextval, #{division},  #{title}, #{content},  sysDate)
+		(notice_seq.nextval, #{division},  #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd})
 	</insert>
 	
 	

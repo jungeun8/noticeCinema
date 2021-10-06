@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -29,11 +30,13 @@
 				<div class="mb-3">
 				  <label for="exampleFormControlInput1" class="form-label">제목</label>
 				  <input type="text" class="form-control" id="title" name="title" value="${noticeDetail.title }"/>
+				  <p id="textCount" name="textCount">(${fn:length(noticeDetail.title) } / 최대 20자)</p>
 				</div>
 				<div class="mb-3">
 				  <label for="exampleFormControlTextarea1" class="form-label">내용</label>
-				  <input class="form-control" id="content" name ="content" value="${noticeDetail.content }"></input>
-				  <input type="hidden" name="no" id="no" value="${noticeDetail.no }">
+				   <textarea class="form-control" id="content" name ="content" rows="3">${noticeDetail.content }</textarea>
+				    <p id="textCount1" name="textCount1">(${fn:length(noticeDetail.content) } / 최대 1000자)</p>
+				  <input type="hidden" name="no" id="no" value="${noticeDetail.no }"> 
 				</div>
 				<div style="text-align: right;">
 	                <input type=submit value="수정" onclick="checkForm()"/>
@@ -44,14 +47,67 @@
 	<%@ include file="../common/footer.jsp"%>	
 </div>
 <script type="text/javascript">
+$(function() {
+	// 입력값 유효성 체크해서 전부 값이 입력되어 있을 때만 폼 입력값이 서버로 제출되게 하기
+	$("#notice-form").submit(function() {
+		
+		var title = $("#title").val();
+		if (!title) {
+			alert("제목을 입력해주세요.");
+			$("#title").focus();
+			return false;
+		}else if(title.trim() == ""){
+			 alert("제목을 공백없이 입력해주세요!!");
+	    	  return false;
+		}
+		var content = $("#content").val();
+		if (!content) {
+			alert("내용을 입력해주세요.");
+			$("#content").focus();
+			return false;
+		}else if(content.trim() ==""){
+			 alert("내용을 공백없이 입력해주세요!!");
+	    	  return false;
+		}
+		return true;
+    	alert("글이 등록됩니다!");
+	});
+})
 
-function checkForm() {
-     alert("글이 등록됩니다!");
-    
-	return true;
-	
-}
+ $("#title").keydown(function(e) {
+      var content = $(this).val();
+      $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅
+   }); 
 
+$("#title").keyup(function(e) {
+      var content = $(this).val();
+      $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅 */ 
+      if (content.length > 20) {
+    	if( !alert("최대 20자까지 입력 가능합니다. (현재 글자수 : "+ content.length+")")){
+    		$(this).val(content.substring(0, 20));
+            $('#textCount').text("(20 / 최대 20자)");
+    	}
+      }
+   });
+   
+$("#content").keydown(function(e) {
+    var content1 = $(this).val();
+    $("#textCount1").text("(" + content1.length + "/ 1000자)"); //실시간 글자수 카운팅 */
+ }); 
+   
+
+$("#content").keyup(function(e) {
+   var content1 = $(this).val();
+   $("#textCount1").text("(" + content1.length + "/ 1000자)"); //실시간 글자수 카운팅 */
+   if (content1.length > 1000) {
+	   if( !alert("최대 1000자까지 입력 가능합니다. (현재 글자수 : "+ content1.length+")")){
+      $(this).val(content1.substring(0, 1000));
+      $('#textCount1').text("(1000 / 최대 1000자)");
+	   }
+   }
+});
+
+		
 </script>
 </body>
 </html>

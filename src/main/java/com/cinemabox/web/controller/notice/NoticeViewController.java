@@ -3,16 +3,20 @@ package com.cinemabox.web.controller.notice;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
+import com.cinemabox.dto.Question.QuestionDto;
 import com.cinemabox.service.theater.Notice.NoticeService;
 import com.cinemabox.vo.Notice;
 
@@ -116,9 +120,9 @@ public class NoticeViewController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@GetMapping("/modify")
-	public String modifyNotice(int no, Model model) throws Exception{
-		NoticeDetailDto noticeDetail = noticeService.detailNoticeByNo(no);
+	@RequestMapping("/modify")
+	public String modifyNotice(Notice list, Model model) throws Exception{
+		Notice noticeDetail = noticeService.getModifyNotice(list);
 		model.addAttribute("noticeDetail", noticeDetail);
 		
 		return "notice/modifyNotice";
@@ -135,6 +139,30 @@ public class NoticeViewController {
 		noticeService.changeNotice(notice);
 		redirectAttributes.addAttribute("no", notice.getNo());
 		return "redirect:list";
+	}
+	
+	/**
+	 * 글 수정 전 작성자, 비밀번호 입력
+	 * @param no
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@GetMapping("/confirm")
+	public String confirm(int no, Model model) {
+		// List<Notice> noticeList = noticeService.noticeMain();
+		model.addAttribute("no",no);
+		return "notice/confirm";
+	}
+	
+	/**
+	 * 작성자, 비밀번호 입력 후 작성한 글 수 
+	 * @param param
+	 * @return
+	 */
+	@RequestMapping("/list/modify")
+	public @ResponseBody ResponseEntity<Integer> getNoticeCountByName(Notice param) {
+		int count = noticeService.getNoticeCountByName(param);
+		return new ResponseEntity<Integer>(count, HttpStatus.OK);
 	}
 	
 	

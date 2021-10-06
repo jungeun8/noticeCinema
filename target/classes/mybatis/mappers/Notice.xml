@@ -74,6 +74,21 @@
            A. no= #{no}
 	</select>
 	
+	<select id="getModifyNotice" parameterType="com.cinemabox.vo.Notice" resultType="com.cinemabox.vo.Notice">
+		select 
+				notice_no				no,
+                notice_content			content,
+                notice_title			title,
+                notice_date				creatDate,
+                notice_hits				hits,
+                notice_id				noticeId,
+		        notice_pwd				noitcePwd
+		from 
+			 cinemabox_notice
+        where 
+           notice_no = #{no} and  notice_pwd = #{noitcePwd}
+	</select>
+	
 
 	<insert id="insertNotice" parameterType="com.cinemabox.dto.Notice.NoticeDto">
 		insert into cinemabox_notice
@@ -109,11 +124,22 @@
 			cinemabox_notice
 		set
 			notice_content	= #{content},	
-			notice_title	= #{title}		
+			notice_title	= #{title},
+			notice_id	= #{noticeId},	
+			notice_pwd	= #{noitcePwd}
 		where
 			notice_no = #{no}
 	</update>
 	
+	<select id="getNoticeCountByName" parameterType="com.cinemabox.vo.Notice" resultType="int">
+		select 
+			count(*)
+		from
+			cinemabox_notice
+		where		
+			notice_pwd = #{noitcePwd} 
+			and notice_no = #{no}
+	</select>
 	
 
 

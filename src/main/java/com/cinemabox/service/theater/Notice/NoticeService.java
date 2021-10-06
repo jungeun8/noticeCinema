@@ -25,8 +25,11 @@ public interface NoticeService {
 	List<Notice> noticeMain();
 	// 고객센터 메인페이지에 공지사항 추가
 	int getPageAllCnt(NoticeListDto searchData);
-	// 공지사항의 총 페이지수를 반
-
+	// 공지사항의 총 페이지수를 반환
+	int getNoticeCountByName(Notice param);
+	// 수정글 수 체크
+	Notice getModifyNotice(Notice modifyNotice);
+	// 글 수정
 
 	
 	

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -11,11 +12,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="/cinemabox/resources/js/common.js"></script>
+
 <title>공지사항</title>
 <style type="text/css">
  a:link { color: black; text-decoration: none;}
  a:visited { color: black; text-decoration: none;}
  a:hover { color: #ecbd35; text-decoration: underline;}
+ 
+ table{
+ 	table-layout:fixed;
+ }
 </style>
 </head>
 <body>
@@ -54,27 +60,28 @@
 						<table class="table">
 							<colgroup>
 								<col width="10%">
-								<col width="15%">
 								<col width="*">
+								<col width="15%">
 								<col width="15%">
 								<col width="10%">
 							</colgroup>
 							<thead style="background: #fbe5a5;">
 								<tr class="text-center">
 									<th>번호</th>
-									<th>카테고리</th>
 									<th>제목</th>
 									<th>등록일</th>
+									<th>작성자</th>
 									<th class="text-end">조회수</th>
 								</tr>
 							</thead>
 							<tbody>
 								<c:forEach var="noticeList" items="${noticeList }">
 									<tr class="text-center">
-										<td>${noticeList.no }</td>
-										<td>${noticeList.division }</td>
-										<td><a class="text-decoration-none" href="detail?no=${noticeList.no }">${noticeList.title }</a></td>
+										<input type="hidden" name=noticeNo id="noticeNo" value="${noticeList.no }"/>
+										<td>${noticeList.num }</td>
+										<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/></pre></a></td>
 										<td><fmt:formatDate value="${noticeList.creatDate }" pattern="yyyy.MM.dd"/></td>
+										<td><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.noticeId }"/></pre></td>
 										<td class="text-end">${noticeList.hits }</td>
 									</tr>
 								</c:forEach>
@@ -84,21 +91,43 @@
 					<div style="text-align: right;">
 						<button type="button" class="btn btn-warning" onclick="location.href='add'">글쓰기</button>
 					</div>	
-					<div style="margin-left: 40%; margin-top: 15px;"> 
+					<div style="margin-left: 30%; margin-top: 15px;"> 
 						<nav aria-label="Page navigation example">
-		 					<ul class="pagination">
-		   						<li class="page-item"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+		 					<ul class="pagination" >
+		 					<% 
+		 					int nowPage = (int)request.getAttribute("page"); // 현재페이지 
+		 					String searchWord = (String)request.getAttribute("searchWord");
+		 					int pageAllCnt123 =(int)request.getAttribute("pageAllCnt");	// 총페이지
+		 					int startPage = (((nowPage-1)/5)*5)+1; // 첫번째 페이지 계산
+		 					%>
+		 					<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=1&searchWord=<%=searchWord%>"  aria-label="firstPrevious"><span aria-hidden="true">처음</span></a></li>
+							<li class="page-item"><a class="page-link" href="../notice/list?page=<%=startPage-5<1?1:startPage-5 %>&searchWord=<%=searchWord%>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
 						  	 	<% 
-									int pageAllCnt123 =(int)request.getAttribute("pageAllCnt");
-						  	 	 	String searchWord = (String)request.getAttribute("searchWord");
-									for(int i=0; i<pageAllCnt123; i++){ %>
-									<li class="page-item"><a class="page-link" href="../notice/list?page=<%=i+1%>&searchWord=<%=searchWord%>"><%=i+1 %></a></li> 
-								<%
+						  	 		/* int firstPage = (int)request.getAttribute("startPage"); */
+									/* int pageAllCnt123 =(int)request.getAttribute("pageAllCnt");	// 총페이지 */
+						  	  		/* int nowPage = (int)request.getAttribute("page"); // 현재페이지  */
+						  	 	 /* 	String searchWord = (String)request.getAttribute("searchWord"); */
+						  	 	 /* 	int startPage = ((nowPage/5)*5)+1; // 첫번째 페이지 계산 */
+									for(int i=startPage; i<startPage+5; i++){ 
+										if(i>pageAllCnt123) break;	// 만약에 총페이지 수보다 커지면 중지
+										if(nowPage==i){
+											%>
+											<li class="page-item" id="paging"><a class="page-link" style="background-color:#ffc007" href="../notice/list?page=<%=i%>&searchWord=<%=searchWord%>"><%=i%></a></li>
+											<%
+										}else{
+											%>
+											<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=i%>&searchWord=<%=searchWord%>"><%=i%></a></li>
+											<%
+										}
 									}
 								%>
-				    			<li class="page-item">
-				     				<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
-		    					</li>
+								<% System.out.println("nowPage : " + nowPage); %>
+								<% System.out.println("pageAllCnt123 : " + pageAllCnt123); %>
+								<% if((( (nowPage-1)/5 ) *5 )+5 < pageAllCnt123){ // 맨 마지막 페이지가 화면에 보여지는 마지막 페이지보다 클 경우에만 보이도록 %> 
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=startPage+5>pageAllCnt123?pageAllCnt123:startPage+5 %>&searchWord=<%=searchWord %>" aria-label="Next"><span aria-hidden="true">
+		    				&raquo;
+		    				</span></a></li> <% } %>
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=(int)(Math.ceil(pageAllCnt123*5)/5) %>&searchWord=<%=searchWord %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
 		  					</ul>
 						</nav>
 					</div>
@@ -109,9 +138,7 @@
 	<%@ include file="../common/footer.jsp"%>
 </div>
 <script type="text/javascript">
-function serch_click() {
-		
-}	
+
 </script>
 </body>
 <style>

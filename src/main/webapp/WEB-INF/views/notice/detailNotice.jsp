@@ -77,7 +77,7 @@
 				</table>
 				<div style="text-align: right;">
 					<button type="button" class="btn btn-warning" onclick="location.href='list'">목록</button>
-					<button type="button" class="btn btn-warning"  onclick="location.href='modify?no=${noticeDetail.no}'">수정</button>
+					<button type="button" class="btn btn-warning"  onclick="location.href='confirm?no=${noticeDetail.no}'">수정</button>
 					<button type="button" class="btn btn-warning" onclick="del(${noticeDetail.no})">삭제</button>
 				</div>
 			</div>		

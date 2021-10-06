@@ -51,7 +51,7 @@
 		  			<div class="container-fluid">
 		   				 <form class="d-flex"id="search" method="get" action="../notice/list">
 		   				 	 <input type="hidden" name="page" id="page" value="1">
-		     				 <input class="form-control me-2" type="search" id="searchWord" name="searchWord" value="${searchWord }" placeholder="검색어를 입력해주세요." aria-label="Search">
+		     				 <input class="form-control me-2 " type="search" id="searchWord" name="searchWord" value="${searchWord }" placeholder="제목을 검색해주세요" aria-label="Search">
 		     				 <button class="btn btn-outline-dark" style="width: 100px;" onclick="serch_click()">검색</button>
 		    			</form>
 		  			</div>
@@ -89,6 +89,7 @@
 						</table>
 					</div>
 					<div style="text-align: right;">
+						<button type="button" class="btn btn-warning" onclick="location.href='list'">목록</button>
 						<button type="button" class="btn btn-warning" onclick="location.href='add'">글쓰기</button>
 					</div>	
 					<div style="margin-left: 30%; margin-top: 15px;"> 
@@ -97,19 +98,19 @@
 		 					<% 
 		 					int nowPage = (int)request.getAttribute("page"); // 현재페이지 
 		 					String searchWord = (String)request.getAttribute("searchWord");
-		 					int pageAllCnt123 =(int)request.getAttribute("pageAllCnt");	// 총페이지
-		 					int startPage = (((nowPage-1)/5)*5)+1; // 첫번째 페이지 계산
+		 					int pageAllCnt =(int)request.getAttribute("pageAllCnt");	// 총페이지
+		 					int firstPage = (((nowPage-1)/5)*5)+1; // 각 행의 첫번째 페이지 계산
 		 					%>
 		 					<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=1&searchWord=<%=searchWord%>"  aria-label="firstPrevious"><span aria-hidden="true">처음</span></a></li>
-							<li class="page-item"><a class="page-link" href="../notice/list?page=<%=startPage-5<1?1:startPage-5 %>&searchWord=<%=searchWord%>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+							<li class="page-item"><a class="page-link" href="../notice/list?page=<%=firstPage-5<1?1:firstPage-5 %>&searchWord=<%=searchWord%>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
 						  	 	<% 
 						  	 		/* int firstPage = (int)request.getAttribute("startPage"); */
 									/* int pageAllCnt123 =(int)request.getAttribute("pageAllCnt");	// 총페이지 */
 						  	  		/* int nowPage = (int)request.getAttribute("page"); // 현재페이지  */
 						  	 	 /* 	String searchWord = (String)request.getAttribute("searchWord"); */
 						  	 	 /* 	int startPage = ((nowPage/5)*5)+1; // 첫번째 페이지 계산 */
-									for(int i=startPage; i<startPage+5; i++){ 
-										if(i>pageAllCnt123) break;	// 만약에 총페이지 수보다 커지면 중지
+									for(int i=firstPage; i<firstPage+5; i++){ 
+										if(i>pageAllCnt) break;	// 만약에 총페이지 수보다 커지면 중지
 										if(nowPage==i){
 											%>
 											<li class="page-item" id="paging"><a class="page-link" style="background-color:#ffc007" href="../notice/list?page=<%=i%>&searchWord=<%=searchWord%>"><%=i%></a></li>
@@ -122,12 +123,12 @@
 									}
 								%>
 								<% System.out.println("nowPage : " + nowPage); %>
-								<% System.out.println("pageAllCnt123 : " + pageAllCnt123); %>
-								<% if((( (nowPage-1)/5 ) *5 )+5 < pageAllCnt123){ // 맨 마지막 페이지가 화면에 보여지는 마지막 페이지보다 클 경우에만 보이도록 %> 
-		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=startPage+5>pageAllCnt123?pageAllCnt123:startPage+5 %>&searchWord=<%=searchWord %>" aria-label="Next"><span aria-hidden="true">
+								<% System.out.println("pageAllCnt123 : " + pageAllCnt); %>
+								<% if((( (nowPage-1)/5 ) *5 )+5 < pageAllCnt){ // 맨 마지막 페이지가 화면에 보여지는 마지막 페이지보다 클 경우에만 보이도록 %> 
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=firstPage+5>pageAllCnt?pageAllCnt:firstPage+5 %>&searchWord=<%=searchWord %>" aria-label="Next"><span aria-hidden="true">
 		    				&raquo;
 		    				</span></a></li> <% } %>
-		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=(int)(Math.ceil(pageAllCnt123*5)/5) %>&searchWord=<%=searchWord %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=(int)(Math.ceil(pageAllCnt*5)/5) %>&searchWord=<%=searchWord %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
 		  					</ul>
 						</nav>
 					</div>
@@ -138,7 +139,15 @@
 	<%@ include file="../common/footer.jsp"%>
 </div>
 <script type="text/javascript">
-
+$(function() {
+	$("#search").submit(function() {
+	var searchWord = $("#searchWord").val();
+		if(searchWord.trim() == ""){
+			alert("검색어를 한글자 이상 입력해주세요");
+	    	  return false;
+			}
+	});		
+})
 </script>
 </body>
 <style>

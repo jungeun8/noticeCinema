@@ -37,7 +37,7 @@
 	<bean id="dataSource" 
 		class="org.apache.commons.dbcp2.BasicDataSource"
 		p:driverClassName="oracle.jdbc.OracleDriver"
-		p:url="jdbc:oracle:thin:@cinemabox_high?TNS_ADMIN=/home/opc/wallet/Wallet_CINEMABOX"
+		p:url="jdbc:oracle:thin:@cinemabox_high?TNS_ADMIN=/Users/jungeun-kim/Wallet_CINEMABOX"
 		p:username="admin"
 		p:password="Cinemabox1234"/>
 		

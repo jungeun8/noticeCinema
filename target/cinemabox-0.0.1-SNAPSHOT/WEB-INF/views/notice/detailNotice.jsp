@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+     <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!doctype html>
 <html lang="ko">
 <head>
@@ -49,24 +50,27 @@
 					</colgroup>
 					<thead style="background: #fbe5a5;">
 						<tr>
-							<th>${noticeDetail.title }</th>
+							<th><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeDetail.title }"/></pre></th>
 							<th>등록일<span><fmt:formatDate value="${noticeDetail.creatDate }" pattern="yyyy.MM.dd"/></span></th>
 							<th style="text-end">조회수<span>${noticeDetail.hits }</span></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr class="content">
-							<td colspan="3" style="padding:35px;">${noticeDetail.content }</td>	
+							<%-- <td colspan="3" style="padding:35px;"><xmp>${noticeDetail.content }</xmp></td>	 --%>
+							<td colspan="3" style="padding:35px;"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeDetail.content}"/></pre></td>
 						</tr>
 						<tr>
 							<td colspan="3">
-								<span style="margin-right:20px">다음글</span><a href="detail?no=${noticeDetail.nextNo }">${noticeDetail.nextTitle }</a>
+								<span style="margin-right:20px">다음글</span><a style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" 
+								href="detail?no=${noticeDetail.nextNo }"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeDetail.nextTitle }"/></pre></a>
 								
 							</td>
 							</tr>
 							<tr>
 								<td colspan="3">
-									<span style="margin-right:20px">이전글</span><a href="detail?no=${noticeDetail.preNo }">${noticeDetail.preTitle }</a>
+									<span style="margin-right:20px">이전글</span><a style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" 
+									href="detail?no=${noticeDetail.preNo }"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeDetail.preTitle }"/></pre></a>
 								</td>
 							</tr>
 						</tbody>

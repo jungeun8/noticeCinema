@@ -35,9 +35,6 @@ public class NoticeServiceImpl implements NoticeService {
 	@Override
 	public void addNotice(NoticeDto addNotice) {
 		// 공지 등록 
-		String secretPassword = DigestUtils.sha256Hex(addNotice.getNoitcePwd());
-		addNotice.setNoitcePwd(secretPassword);
-		
 		 noticeDao.insertNotice(addNotice);
 		 
 	}
@@ -74,5 +71,16 @@ public class NoticeServiceImpl implements NoticeService {
 	public int getPageAllCnt(NoticeListDto searchData) {
 		return noticeDao.getPageAllCnt(searchData);
 	}
+	
+	@Override
+	public int getNoticeCountByName(Notice param) {
+		// 수정글 수 체크
+		return noticeDao.getNoticeCountByName(param);
+	}
 
+	@Override
+	public Notice getModifyNotice(Notice modifyNotice) {
+		// 수정 페이지 들어갈때 
+		return noticeDao.getModifyNotice(modifyNotice);
+	};
 }
