@@ -13,6 +13,7 @@ import com.cinemabox.dto.Notice.NoticeListDto;
 import com.cinemabox.vo.Notice;
 
 
+
 @Service
 public class NoticeServiceImpl implements NoticeService {
 
@@ -45,6 +46,14 @@ public class NoticeServiceImpl implements NoticeService {
 		noticeDao.deleteNotice(no);
 	}
 	
+	@Override
+	public boolean getdeleteNotice(Notice param) {
+		int existNotice = noticeDao.getdeleteNotice(param);
+		if (existNotice > 0) {
+			return true;
+		}else return false; 
+		
+	}
 	@Override
 	public void increaseHit(int no) {
 		// 조회수 증가 

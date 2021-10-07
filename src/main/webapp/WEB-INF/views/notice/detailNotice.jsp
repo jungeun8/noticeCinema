@@ -75,10 +75,16 @@
 							</tr>
 						</tbody>
 				</table>
+						 <div class="col-4">
+    						<label for="inputPassword" class="visually-hidden">비밀번호</label>
+    						 <input type="hidden" name="deleteNo" id="deleteNo" value="${noticeDetail.no }"> 
+    						<input type="password" class="form-control" id="password" name="password" placeholder="비밀번호">**삭제시 비밀번호를 입력하세요
+ 						</div>
+						
 				<div style="text-align: right;">
 					<button type="button" class="btn btn-warning" onclick="location.href='list'">목록</button>
 					<button type="button" class="btn btn-warning"  onclick="location.href='confirm?no=${noticeDetail.no}'">수정</button>
-					<button type="button" class="btn btn-warning" onclick="del(${noticeDetail.no})">삭제</button>
+					<button type="button" class="btn btn-warning" id="delete" onclick="">삭제</button>
 				</div>
 			</div>		
 	</div>
@@ -86,7 +92,7 @@
 	
 </div>
 <script type="text/javascript">
-
+/* 
 function del(no) {
 	var chk = confirm("정말 삭제하시겠습니까?");
 	if (chk) {
@@ -94,6 +100,34 @@ function del(no) {
 		location.href='delete?no='+no;
 	}
 }	
+ */
+$("#delete").click(function() {
+	if($("#password").val()==""){ // 비밀번호가 없는 경우
+		alert("비밀번호를 입력해주세요!!");
+		$("#password").focus();
+		return;
+	}$.ajax({
+		type: "POST",
+		url: "/cinemabox/notice/deleteList",
+		data: {noitcePwd: $("#password").val(),
+				no: $("#deleteNo").val()},
+		error : function(error) {
+	        alert("Error!");
+	    },
+		success : function(result){
+			if(result) { 
+			location.href='delete?no='+$("#deleteNo").val();
+			alert("삭제되었습니다");
+		}else {
+			alert("비밀번호가 틀렸습니다"); 
+			}
+		},
+	    complete : function() {
+	      /*   alert("삭제되었습니다."); 
+	        location.href='delete?no='+no; */
+	    }
+	})
+});
 
 </script>
 </body>

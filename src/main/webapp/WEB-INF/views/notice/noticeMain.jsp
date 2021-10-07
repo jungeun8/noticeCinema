@@ -128,7 +128,7 @@
 		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=firstPage+5>pageAllCnt?pageAllCnt:firstPage+5 %>&searchWord=<%=searchWord %>" aria-label="Next"><span aria-hidden="true">
 		    				&raquo;
 		    				</span></a></li> <% } %>
-		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=(int)(Math.ceil(pageAllCnt*5)/5) %>&searchWord=<%=searchWord %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/list?page=<%=pageAllCnt %>&searchWord=<%=searchWord %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
 		  					</ul>
 						</nav>
 					</div>

@@ -88,7 +88,6 @@
         where 
            notice_no = #{no} and  notice_pwd = #{noitcePwd}
 	</select>
-	
 
 	<insert id="insertNotice" parameterType="com.cinemabox.dto.Notice.NoticeDto">
 		insert into cinemabox_notice
@@ -97,8 +96,6 @@
 		(notice_seq.nextval, #{division},  #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd})
 	</insert>
 	
-	
-	
 	<delete id="deleteNotice" parameterType="int">
 		delete from
 			cinemabox_notice
@@ -106,7 +103,11 @@
 			notice_no = #{no}
 	</delete>
 	
-	
+	<select  id="getdeleteNotice" parameterType="com.cinemabox.vo.Notice" resultType="int"> 
+		select count(*) 
+		from cinemabox_notice
+		where notice_no = #{no} and notice_pwd = #{noitcePwd}
+	</select>
 	
 	<update id="increaseHit" parameterType="int">
 		update

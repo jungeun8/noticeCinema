@@ -73,5 +73,10 @@ public interface NoticeDao {
 	 */
 	int getNoticeCountByName(Notice param);
 
-
+	/**
+	 * 비번일치여부 삭제
+	 * @param param
+	 * @return
+	 */
+	int getdeleteNotice(Notice param);
 }

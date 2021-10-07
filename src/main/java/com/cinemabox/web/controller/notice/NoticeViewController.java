@@ -79,7 +79,7 @@ public class NoticeViewController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@GetMapping("/delete")
+	@RequestMapping("/delete")
 	public String delete(@RequestParam int no,  RedirectAttributes redirectAttributes) {
 		noticeService.deleteNotice(no);
 		redirectAttributes.addAttribute("no", no);	
@@ -165,5 +165,15 @@ public class NoticeViewController {
 		return new ResponseEntity<Integer>(count, HttpStatus.OK);
 	}
 	
+	/**
+	 * 삭제
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/deleteList")
+	public @ResponseBody ResponseEntity<Boolean> deleteList(Notice delete) {
+		Boolean pwdCheck = noticeService.getdeleteNotice(delete); 
+		return new ResponseEntity<Boolean>( pwdCheck, HttpStatus.OK);
+	}
 	
 }

@@ -30,6 +30,8 @@ public interface NoticeService {
 	// 수정글 수 체크
 	Notice getModifyNotice(Notice modifyNotice);
 	// 글 수정
+	boolean getdeleteNotice(Notice param);
+	
 
 	
 	
