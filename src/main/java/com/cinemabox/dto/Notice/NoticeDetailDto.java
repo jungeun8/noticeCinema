@@ -20,5 +20,7 @@ public class NoticeDetailDto {
 	private String preTitle;
 	private String noticeId;
 	private String noitcePwd;
+	private int parNo;
+	private int seq;
 
 }

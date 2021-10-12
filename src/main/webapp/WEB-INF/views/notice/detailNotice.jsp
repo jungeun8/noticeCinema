@@ -82,6 +82,7 @@
  						</div>
 						
 				<div style="text-align: right;">
+					<button type="button" class="btn btn-warning"  onclick="location.href='addAnswer?no=${noticeDetail.no}&parNo=${noticeDetail.parNo}&seq=${noticeDetail.seq}'">답글</button>
 					<button type="button" class="btn btn-warning" onclick="location.href='list'">목록</button>
 					<button type="button" class="btn btn-warning"  onclick="location.href='confirm?no=${noticeDetail.no}'">수정</button>
 					<button type="button" class="btn btn-warning" id="delete" onclick="">삭제</button>

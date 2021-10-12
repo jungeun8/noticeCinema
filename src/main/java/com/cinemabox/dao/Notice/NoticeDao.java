@@ -2,9 +2,11 @@ package com.cinemabox.dao.Notice;
 
 import java.util.List;
 
+import com.cinemabox.dto.Notice.NoticeAnswerDto;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
+import com.cinemabox.dto.Notice.NoticeSeqDto;
 import com.cinemabox.dto.Question.QuestionDto;
 import com.cinemabox.vo.Notice;
 
@@ -31,9 +33,21 @@ public interface NoticeDao {
 	
 	/**
 	 * 공지하기 
-	 * @param addNotice
+	 * @param NoticeDto
 	 */
 	void insertNotice(NoticeDto addNotice);
+	
+	/**
+	 * 답글등록
+	 * @param NoticeAnswerDto
+	 */
+	void insertNoticeAnswer(NoticeAnswerDto addNotice);
+	
+	/**
+	 * 답글등록시 시퀀스 수
+	 * @param noticeSeqParam
+	 */
+	void updateNoticeSeq(NoticeSeqDto noticeSeqParam);
 	
 	/**
 	 *  지정된 번호로 공지 내용 삭제하기 

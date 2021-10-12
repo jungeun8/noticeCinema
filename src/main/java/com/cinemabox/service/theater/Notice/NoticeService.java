@@ -3,6 +3,7 @@ package com.cinemabox.service.theater.Notice;
 
 import java.util.List;
 
+import com.cinemabox.dto.Notice.NoticeAnswerDto;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
@@ -22,6 +23,8 @@ public interface NoticeService {
 	// 공지 등록 
 	void changeNotice(NoticeDetailDto notice);
 	// 공지사항 수정 
+	void addNoticeAnswer(NoticeAnswerDto notice);
+	// 공지 답글 등록
 	List<Notice> noticeMain();
 	// 고객센터 메인페이지에 공지사항 추가
 	int getPageAllCnt(NoticeListDto searchData);
@@ -31,6 +34,8 @@ public interface NoticeService {
 	Notice getModifyNotice(Notice modifyNotice);
 	// 글 수정
 	boolean getdeleteNotice(Notice param);
+	
+
 	
 
 	

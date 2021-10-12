@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.cinemabox.dto.Notice.NoticeAnswerDto;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
+import com.cinemabox.dto.Notice.ParNoticeDto;
 import com.cinemabox.dto.Question.QuestionDto;
 import com.cinemabox.service.theater.Notice.NoticeService;
 import com.cinemabox.vo.Notice;
@@ -52,6 +54,8 @@ public class NoticeViewController {
 		model.addAttribute("searchWord", searchData.getSearchWord());
 		model.addAttribute("startPage", searchData.getStartPage());
 		model.addAttribute("endPage", searchData.getEndPage());
+		model.addAttribute("endPage", searchData.getSeq());
+		model.addAttribute("endPage", searchData.getParNo());
 		// 뷰페이지로 내부이동하기
 		// /WEB-INF/views/notice/noticeMain.jsp로 내부이동해서 JSP 실행시키기
 		return "notice/noticeMain";
@@ -70,6 +74,8 @@ public class NoticeViewController {
 		// 조회수 증가 
 		noticeService.increaseHit(no);
 		model.addAttribute("no", no);
+		model.addAttribute("seq", noticeDetail.getSeq());
+		model.addAttribute("perNo", noticeDetail.getParNo());
 		return "notice/detailNotice";
 	}
 
@@ -99,9 +105,37 @@ public class NoticeViewController {
 		System.out.println("notice ==>"+notice.toString());
 		notice.setImportant("true".equals(notice.getImportant())?"1":"0");
 		noticeService.addNotice(notice);
-
 		return "redirect:list";
 	}
+	
+	/**
+	 * 공지 사항 답글추가 후 페이지이동
+	 * @param no
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/insert/answer")
+	public String insertAnswerNotice(NoticeAnswerDto notice, RedirectAttributes redirectAttributes) {
+		noticeService.addNoticeAnswer(notice);
+		return "redirect:list";
+	}
+	
+	/**
+	 * 답글 추가 페이지
+	 * @param no
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@GetMapping("/addAnswer")
+	public String addAnswer(ParNoticeDto answer, Model model) {
+		model.addAttribute("no",answer.getNo());
+		model.addAttribute("parNo",answer.getParNo());
+		model.addAttribute("seq",answer.getSeq());
+		return "notice/insertAnswerNotice";
+	}
+	
+	
+	
 	/**
 	 * 공지 글 추가 페이지
 	 * @param no
@@ -110,7 +144,6 @@ public class NoticeViewController {
 	 */
 	@GetMapping("/add")
 	public String addNotice() {
-		
 		return "notice/insertNotice";
 	}
 	
@@ -124,7 +157,6 @@ public class NoticeViewController {
 	public String modifyNotice(Notice list, Model model) throws Exception{
 		Notice noticeDetail = noticeService.getModifyNotice(list);
 		model.addAttribute("noticeDetail", noticeDetail);
-		
 		return "notice/modifyNotice";
 	}
 	
@@ -154,8 +186,9 @@ public class NoticeViewController {
 		return "notice/confirm";
 	}
 	
+	
 	/**
-	 * 작성자, 비밀번호 입력 후 작성한 글 수 
+	 * 작성자, 비밀번호 입력 후 작성한 글 수정 
 	 * @param param
 	 * @return
 	 */

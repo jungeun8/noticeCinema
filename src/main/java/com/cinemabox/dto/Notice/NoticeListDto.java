@@ -9,5 +9,7 @@ public class NoticeListDto {
 	private int startPage = 1;
 	private int endPage = 5;
 	private String searchWord ="";
+	private int parNo;
+	private int seq;
 
 }

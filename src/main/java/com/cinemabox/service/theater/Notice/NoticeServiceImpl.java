@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cinemabox.dao.Notice.NoticeDao;
+import com.cinemabox.dto.Notice.NoticeAnswerDto;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
+import com.cinemabox.dto.Notice.NoticeSeqDto;
 import com.cinemabox.vo.Notice;
 
 
@@ -23,6 +25,15 @@ public class NoticeServiceImpl implements NoticeService {
 	public List<Notice> getNoticeAll(NoticeListDto searchData){
 		// 공지사항 조회 
 		List<Notice> notice = noticeDao.getNoticeAll(searchData);
+		
+		for(int i=0; i<notice.size(); i++) {
+			if(notice.get(i).getDepth()>0) {
+				Notice item = notice.get(i); // 게시글 
+				item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
+				notice.set(i, item);
+			}
+		}
+		
 		// 공지사항을 반환한다.
 		return notice;
 	}
@@ -37,8 +48,18 @@ public class NoticeServiceImpl implements NoticeService {
 	public void addNotice(NoticeDto addNotice) {
 		// 공지 등록 
 		 noticeDao.insertNotice(addNotice);
-		 
 	}
+	
+
+	@Override
+	public void addNoticeAnswer(NoticeAnswerDto notice) {
+		// 공지 답글 등록
+		noticeDao.insertNoticeAnswer(notice);
+		NoticeSeqDto noticeSeqParam = new NoticeSeqDto();
+		noticeSeqParam.setParNo(notice.getParNo());
+		noticeSeqParam.setSeq(notice.getSeq());
+		noticeDao.updateNoticeSeq(noticeSeqParam);
+	};
 	
 	@Override
 	public void deleteNotice(int no) {
@@ -91,5 +112,6 @@ public class NoticeServiceImpl implements NoticeService {
 	public Notice getModifyNotice(Notice modifyNotice) {
 		// 수정 페이지 들어갈때 
 		return noticeDao.getModifyNotice(modifyNotice);
-	};
+	}
+
 }

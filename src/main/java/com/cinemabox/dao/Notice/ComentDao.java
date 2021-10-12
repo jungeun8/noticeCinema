@@ -2,12 +2,14 @@ package com.cinemabox.dao.Notice;
 
 import java.util.List;
 
+import com.cinemabox.dto.Notice.ComentDto;
+import com.cinemabox.dto.Notice.ComentModifyDto;
 import com.cinemabox.vo.Coment;
 
 public interface ComentDao {	
 	
 	/**
-	 * 전체 댓글 정보를 반환함
+	 * 전체 댓글 정보를 조회
 	 * @param no
 	 * @return
 	 */
@@ -23,15 +25,20 @@ public interface ComentDao {
 	 * 댓글 삭제함
 	 * @param no
 	 */
-	void deleteComent(int no);
+	Integer deleteComent(ComentModifyDto deleteList);
 	
 	/**
 	 *  댓글을 수정함
 	 * @param pwd
 	 */
-	void updateComent(String pwd);
+	Integer updateComent(ComentModifyDto updateList);
 	
-	
+	/**
+	 * 게시글 총 페이지 수
+	 * @param page
+	 * @return
+	 */
+	int getPageAllCnt(ComentDto page);
 	
 	
 

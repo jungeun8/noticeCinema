@@ -5,33 +5,38 @@
 <mapper namespace="com.cinemabox.dao.Notice.NoticeDao">
 
 	<select id="getNoticeAll" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="com.cinemabox.vo.Notice">
-		select 
-			num,
+	   select 
+   			num,
 		    no,
 		    division,
 		    title,
 		    creatDate,
 		    hits,
 		    noticeId,
-		    noitcePwd
-		from (
-		    select 
-		        notice_no				no,
+		    noitcePwd,
+            parNo,
+            depth,
+            seq
+        from (
+            select 
+   		        notice_no				no,
 		        notice_division			division,
 		        notice_title			title,
 		        notice_date				creatDate,
 		        notice_hits				hits,
 		        notice_id				noticeId,
 		        notice_pwd				noitcePwd,
-		        ROW_NUMBER() OVER (order by notice_no desc) numno,
-		        ROW_NUMBER() OVER (order by notice_date) num
-		    from
-		    	cinemabox_notice
-			 where 
+                notice_par_no parNo,
+                notice_depth depth,
+                notice_seq_no seq,
+                ROW_NUMBER() OVER (order by notice_par_no desc,notice_seq_no) numno,
+                ROW_NUMBER() OVER (order by notice_par_no ,notice_seq_no ) num
+            from cinemabox_notice
+            where 
 			    notice_title like '%${searchWord}%' 
-			order by notice_date desc )
+            order by parNo desc, seq
+            )
 		where numno between ${startPage} and ${endPage}
-	
 	</select>
 	
 	<select id="getPageAllCnt" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="int">
@@ -91,10 +96,25 @@
 
 	<insert id="insertNotice" parameterType="com.cinemabox.dto.Notice.NoticeDto">
 		insert into cinemabox_notice
-		(notice_no, notice_division, notice_title, notice_content, notice_date, notice_id, notice_pwd)
+		(notice_no, notice_division, notice_title, notice_content, notice_date, notice_id, notice_pwd, notice_par_no)
 		values
-		(notice_seq.nextval, #{division},  #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd})
+		(notice_seq.nextval, #{division},  #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd}, notice_seq.nextval)
 	</insert>
+	
+	<insert id="insertNoticeAnswer" parameterType="com.cinemabox.dto.Notice.NoticeAnswerDto">
+		insert into cinemabox_notice
+		(notice_no, notice_division, notice_title, notice_content, notice_date, notice_id, notice_pwd, notice_par_no, notice_depth, notice_seq_no )
+		values
+		(notice_seq.nextval, #{division},  #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd}, #{parNo}, #{depth}, #{seq})
+	</insert>
+	
+	<update id="updateNoticeSeq" parameterType="com.cinemabox.dto.Notice.NoticeSeqDto">
+		update cinemabox_notice 
+		set seq = seq + 1
+		where
+			parNo = #{parNo}
+			and seq > (#{seq}-1)
+	</update>
 	
 	<delete id="deleteNotice" parameterType="int">
 		delete from
@@ -141,6 +161,7 @@
 			notice_pwd = #{noitcePwd} 
 			and notice_no = #{no}
 	</select>
+	
 	
 
 

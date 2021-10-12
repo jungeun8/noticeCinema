@@ -16,6 +16,9 @@ public class Notice {
 	private int num;
 	private String noticeId;
 	private String noitcePwd;
-	
+	private int parNo;
+	private int depth;
+	private int seq;
+    
 
 }
