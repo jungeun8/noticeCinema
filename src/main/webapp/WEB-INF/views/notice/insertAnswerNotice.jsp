@@ -24,12 +24,13 @@
 		<div class="top" style="margin-left:150px;  margin-top:50px;">
 			<h3 >공지사항</h3>
 		</div>
-		<form id="notice-form" name="insertForm" method="post" action="../notice/insert/answer">
+		<form id="notice-form" name="insertForm" method="post" action="../notice/insertAnswer">
 			<div style="padding:80px">
 				<div class="mb-3">
 		 			<label for="exampleFormControlInput1" class="form-label">제목</label>
 		 			<input type="hidden" name="parNo" id="parNo" value="${parNo }"> 
 		 			<input type="hidden" name="seq" id="seq" value="${seq }"> 
+		 			<input type="hidden" name="depth" id="depth" value="${depth }"> 
 		  			<input type="text" class="form-control" id="title" name="title" maxlength="31" autofocus="autofocus">
 		  			<p id="textCount" name="textCount">(0 / 최대 30자)</p>
 				</div>

@@ -7,5 +7,7 @@ public class ParNoticeDto {
 	private int parNo;
 	private int seq;
 	private int no;
+	private int depth;
+	
 
 }

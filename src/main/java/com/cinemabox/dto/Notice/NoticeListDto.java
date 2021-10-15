@@ -11,5 +11,7 @@ public class NoticeListDto {
 	private String searchWord ="";
 	private int parNo;
 	private int seq;
+	private int depth;
+	
 
 }

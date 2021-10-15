@@ -54,8 +54,9 @@ public class NoticeViewController {
 		model.addAttribute("searchWord", searchData.getSearchWord());
 		model.addAttribute("startPage", searchData.getStartPage());
 		model.addAttribute("endPage", searchData.getEndPage());
-		model.addAttribute("endPage", searchData.getSeq());
-		model.addAttribute("endPage", searchData.getParNo());
+		model.addAttribute("seq", searchData.getSeq());
+		model.addAttribute("parNo", searchData.getParNo());
+		model.addAttribute("depth", searchData.getDepth());
 		// 뷰페이지로 내부이동하기
 		// /WEB-INF/views/notice/noticeMain.jsp로 내부이동해서 JSP 실행시키기
 		return "notice/noticeMain";
@@ -75,7 +76,8 @@ public class NoticeViewController {
 		noticeService.increaseHit(no);
 		model.addAttribute("no", no);
 		model.addAttribute("seq", noticeDetail.getSeq());
-		model.addAttribute("perNo", noticeDetail.getParNo());
+		model.addAttribute("parNo", noticeDetail.getParNo());
+		model.addAttribute("depth", noticeDetail.getDepth());
 		return "notice/detailNotice";
 	}
 
@@ -114,9 +116,10 @@ public class NoticeViewController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/insert/answer")
+	@RequestMapping("/insertAnswer")
 	public String insertAnswerNotice(NoticeAnswerDto notice, RedirectAttributes redirectAttributes) {
 		noticeService.addNoticeAnswer(notice);
+		System.out.println("답변parNo: ===>" + notice );
 		return "redirect:list";
 	}
 	
@@ -131,6 +134,7 @@ public class NoticeViewController {
 		model.addAttribute("no",answer.getNo());
 		model.addAttribute("parNo",answer.getParNo());
 		model.addAttribute("seq",answer.getSeq());
+		model.addAttribute("depth",answer.getDepth());
 		return "notice/insertAnswerNotice";
 	}
 	

@@ -26,9 +26,9 @@
 		        notice_hits				hits,
 		        notice_id				noticeId,
 		        notice_pwd				noitcePwd,
-                notice_par_no parNo,
-                notice_depth depth,
-                notice_seq_no seq,
+                notice_par_no			parNo,
+                notice_depth 			depth,
+                notice_seq_no 			seq,
                 ROW_NUMBER() OVER (order by notice_par_no desc,notice_seq_no) numno,
                 ROW_NUMBER() OVER (order by notice_par_no ,notice_seq_no ) num
             from cinemabox_notice
@@ -72,7 +72,10 @@
                 LEAD(notice_no)over(order by notice_no desc) as preNo,
                 LEAD(notice_title)over(order by notice_no desc) as preTitle,
                 LAG(notice_no)over(order by notice_no desc) as  nextNo,
-                LAG(notice_title)over(order by notice_no desc) as nextTitle
+                LAG(notice_title)over(order by notice_no desc) as nextTitle,
+                notice_par_no as parNo,
+                notice_seq_no as seq,
+                notice_depth as depth
 			from cinemabox_notice
 			)A
         where 
@@ -103,17 +106,17 @@
 	
 	<insert id="insertNoticeAnswer" parameterType="com.cinemabox.dto.Notice.NoticeAnswerDto">
 		insert into cinemabox_notice
-		(notice_no, notice_division, notice_title, notice_content, notice_date, notice_id, notice_pwd, notice_par_no, notice_depth, notice_seq_no )
+		(notice_no, notice_title, notice_content, notice_date, notice_id, notice_pwd, notice_par_no, notice_depth, notice_seq_no )
 		values
-		(notice_seq.nextval, #{division},  #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd}, #{parNo}, #{depth}, #{seq})
+		(notice_seq.nextval, #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd}, #{parNo}, #{depth}+1, #{seq}) 		
 	</insert>
 	
 	<update id="updateNoticeSeq" parameterType="com.cinemabox.dto.Notice.NoticeSeqDto">
 		update cinemabox_notice 
-		set seq = seq + 1
+		set notice_seq_no = notice_seq_no + 1
 		where
-			parNo = #{parNo}
-			and seq > (#{seq}-1)
+			notice_par_no = #{parNo}
+			and notice_seq_no > (#{seq}-1)
 	</update>
 	
 	<delete id="deleteNotice" parameterType="int">

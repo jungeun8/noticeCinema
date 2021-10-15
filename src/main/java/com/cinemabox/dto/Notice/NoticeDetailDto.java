@@ -22,5 +22,6 @@ public class NoticeDetailDto {
 	private String noitcePwd;
 	private int parNo;
 	private int seq;
+	private int depth;
 
 }
