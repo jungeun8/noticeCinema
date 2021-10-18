@@ -27,7 +27,7 @@
 		<form id="notice-form" name="insertForm" method="post" action="../notice/insertAnswer">
 			<div style="padding:80px">
 				<div class="mb-3">
-		 			<label for="exampleFormControlInput1" class="form-label">제목</label>
+		 			<label for="exampleFormControlInput1" class="form-label">답변 제목</label>
 		 			<input type="hidden" name="parNo" id="parNo" value="${parNo }"> 
 		 			<input type="hidden" name="seq" id="seq" value="${seq }"> 
 		 			<input type="hidden" name="depth" id="depth" value="${depth }"> 
@@ -35,10 +35,25 @@
 		  			<p id="textCount" name="textCount">(0 / 최대 30자)</p>
 				</div>
 				<div class="mb-3">
-				  <label for="exampleFormControlTextarea1" class="form-label">내용</label>
+				  <label for="exampleFormControlTextarea1" class="form-label">답변 내용</label>
 				  <textarea class="form-control" id="content" name ="content" rows="3" maxlength="1000" autofocus="autofocus"></textarea>
 				  <p id="textCount1" name="textCount1">(0 / 최대 1000자)</p>
 				</div>
+				<h5 class="mb-3">고객정보(필수입력사항입니다)</h5>
+				          <div class="row g-5" style="background: #f5f5f5;">
+				            <div class="col-sm-6">
+				            	<div class="form-floating mb-3">
+  									<input type="text" class="form-control" id="noticeId" name="noticeId" placeholder="" maxlength="4" autofocus="autofocus">
+  									<label for="floatingInput">작성자</label>
+  									<p>**공백없이 4자리까지 작성해주세요</p>
+								</div>
+								<div class="form-floating">
+ 									 <input type="password" class="form-control" id="noitcePwd" name="noitcePwd" placeholder="" maxlength="10" autofocus="autofocus">
+ 									 <label for="floatingPassword">비밀번호</label>
+ 									 <p>**6~10자리로 공백없이 영문,숫자,특수문자를 포함해주세요</p>
+								</div>
+				           </div>
+						</div>
 				<div style="text-align: right;">
 					<button type="button" class="btn btn-warning" onclick="location.href='list'">목록</button>
 					<button type="submit" id="insertBt" class="btn btn-warning"  onclick="checkForm()">등록</button>
@@ -72,11 +87,64 @@ $(function() {
 			 alert("내용을 공백없이 입력해주세요!!");
 			 $("#content").focus();
 	    	  return false;
+		}var noticeId = $("#noticeId").val();
+		if(!noticeId){
+	        alert("작성자를 입력해주세요.");
+	        $("#noticeId").focus();
+	    	  return false;
 		}
+	     var noitcePwd = $("#noitcePwd").val();
+	     var num = noitcePwd.search(/[0-9]/g);
+	     var eng = noitcePwd.search(/[a-z]/ig);
+	     var spe = noitcePwd.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+	     if(!noitcePwd){
+	        alert("비밀번호를 입력해주세요.");
+	        $("#noitcePwd").focus();
+	        return false;
+	     }
+	     else if(noitcePwd.search(/\s/) != -1){
+	    	 alert("비밀번호는 공백 없이 입력해주세요.");
+	    	 $(this).val("");
+	    	 $(this).focus();
+	    	 return false; 
+	     }else if(noitcePwd.length<6 || noitcePwd.length>10){
+	    	  alert("비밀번호는 6자리에서 10자리 이내로 입력해주세요");
+	    	  $(this).val("");
+	     	  $(this).focus();
+	    	  return false;
+	     }else if(num < 0 || eng < 0 || spe < 0){
+	    	  alert("영문,숫자, 특수문자를 혼합하여 입력해주세요.");
+	     	 $(this).val("");
+	    	 $(this).focus();
+	    	  return false;
+	    	 }
 		return true;
 		
 	});
 })
+
+$("#noticeId").keyup(function(e) {
+	 var noticeId = $("#noticeId").val();
+		if(noticeId.length>4){
+			$(this).val(noticeId.substring(0, 4));
+	    	 alert("작성자는 4자리 이내로 입력해주세요");
+	    	 $(this).focus();
+	    	 return false;
+		}else if(noticeId.search(/\s/) != -1){
+	    	  alert("작성자는 공백 없이 입력해주세요.");
+	    	  $(this).focus();
+	    	  return false;
+		}
+   }); 
+
+$("#noitcePwd").keyup(function(e) {
+	 var noitcePwd = $("#noitcePwd").val();
+		 if(noitcePwd.search(/\s/) != -1){
+	    	  alert("비밀번호는 공백 없이 입력해주세요.");
+	    	  $(this).focus();
+	    	  return false;
+		}
+  });  
 
  $("#title").keydown(function(e) {
       var content = $(this).val();
@@ -135,6 +203,31 @@ $("#content").keyup(function(e) {
     	  return false;
 	}
 });
+$("#noitcePwd").on('blur',function(){
+	 var noitcePwd = $("#noitcePwd").val();
+    var num = noitcePwd.search(/[0-9]/g);
+    var eng = noitcePwd.search(/[a-z]/ig);
+    var spe = noitcePwd.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+    if(noitcePwd.length==0){
+   	 return true
+    }
+    else if(noitcePwd.search(/\s/) != -1){
+   	 alert("비밀번호는 공백 없이 입력해주세요.");
+   	 $(this).val("");
+   	 $(this).focus();
+   	 return false; 
+    }else if(noitcePwd.length<6 || noitcePwd.length>10){
+   	  alert("비밀번호는 6자리에서 10자리 이내로 입력해주세요");
+   	  $(this).val("");
+    	  $(this).focus();
+   	  return false;
+    }else if(num < 0 || eng < 0 || spe < 0){
+   	  alert("영문,숫자, 특수문자를 혼합하여 입력해주세요.");
+    	 $(this).val("");
+   	 $(this).focus();
+   	  return false;
+   	 }
+})
 
 </script>
 </body>

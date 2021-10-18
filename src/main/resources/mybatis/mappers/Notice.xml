@@ -115,6 +115,7 @@
 		update cinemabox_notice 
 		set notice_seq_no = notice_seq_no + 1
 		where
+			notice_depth != 0 and
 			notice_par_no = #{parNo}
 			and notice_seq_no > (#{seq}-1)
 	</update>

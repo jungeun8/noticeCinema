@@ -25,7 +25,6 @@ public class NoticeServiceImpl implements NoticeService {
 	public List<Notice> getNoticeAll(NoticeListDto searchData){
 		// 공지사항 조회 
 		List<Notice> notice = noticeDao.getNoticeAll(searchData);
-		
 		for(int i=0; i<notice.size(); i++) {
 			if(notice.get(i).getDepth()>0) {
 				Notice item = notice.get(i); // 게시글 
