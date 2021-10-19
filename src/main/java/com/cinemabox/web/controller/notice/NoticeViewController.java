@@ -13,14 +13,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.cinemabox.dto.Notice.AnswerDto;
 import com.cinemabox.dto.Notice.NoticeAnswerDto;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
 import com.cinemabox.dto.Notice.ParNoticeDto;
 import com.cinemabox.dto.Question.QuestionDto;
+import com.cinemabox.service.theater.Notice.NoticeAnswerService;
 import com.cinemabox.service.theater.Notice.NoticeService;
 import com.cinemabox.vo.Notice;
+import com.cinemabox.vo.NoticeAnswer;
 
 
 
@@ -31,6 +34,8 @@ public class NoticeViewController {
 	// NoticeService를 컨트롤러에 매핑 ( 컨트롤러 어디서든 사용할수 있게 )
 	@Autowired
 	NoticeService noticeService;
+	@Autowired
+	NoticeAnswerService answerService;
 
 	/**
 	 * 공지사항리스트를 조회하여 공지사항 페이지를 호출
@@ -69,15 +74,26 @@ public class NoticeViewController {
 	 * @return
 	 */
 	@GetMapping("/detail")
-	public String details(int no, Model model) {
+	public String details(AnswerDto answer,int no,  Model model) {
+		int page = answer.getPage();
+		answer.setStartPage(((page-1)*10)+1);
+		answer.setEndPage(10*page);
 		NoticeDetailDto noticeDetail = noticeService.detailNoticeByNo(no);
-		model.addAttribute("noticeDetail", noticeDetail);
-		// 조회수 증가 
-		noticeService.increaseHit(no);
+		List<NoticeAnswer> list = answerService.getAllAnswer(answer);
+		int pageAllCnt = answerService.getPageAllCnt();
+	System.out.println("list 내용 보이기!!!!======>"+list);
+		model.addAttribute("noticeDetail", noticeDetail);	
 		model.addAttribute("no", no);
 		model.addAttribute("seq", noticeDetail.getSeq());
 		model.addAttribute("parNo", noticeDetail.getParNo());
 		model.addAttribute("depth", noticeDetail.getDepth());
+		model.addAttribute("pageAllCnt", pageAllCnt);
+		model.addAttribute("page", page);
+		model.addAttribute("list", list);
+		model.addAttribute("content",answer.getContent());
+		model.addAttribute("answerNo", answer.getAnswerNo());
+		model.addAttribute("startPage", answer.getStartPage());
+		model.addAttribute("endPage", answer.getEndPage());
 		return "notice/detailNotice";
 	}
 
@@ -93,8 +109,29 @@ public class NoticeViewController {
 		redirectAttributes.addAttribute("no", no);	
 		return "redirect:list";
 	}
+	/**
+	 * 답글 삭제 후 메인페이지 호출 
+	 * @param no
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping("/deleteComent")
+	public String deleteAnswer(@RequestParam int answerNo,  RedirectAttributes redirectAttributes) {
+		noticeService.deleteNotice(answerNo);
+		redirectAttributes.addAttribute("answerNo", answerNo);	
+		return "redirect:detail";
+	}
 	
-	
+	/**
+	 * 댓글 추가 후 페이지이동
+	 * @param addNotice
+	 * @return
+	 */
+	@RequestMapping("/answerInsert")
+	public String insertAnswer(NoticeAnswer addNotice, RedirectAttributes redirectAttributes) {
+		answerService.insertAnswer(addNotice);
+		return "notice/detailNotice";
+	}
 
 	/**
 	 * 공지 사항 글 추가 후 페이지 이동
@@ -210,6 +247,28 @@ public class NoticeViewController {
 	@RequestMapping("/deleteList")
 	public @ResponseBody ResponseEntity<Boolean> deleteList(Notice delete) {
 		Boolean pwdCheck = noticeService.getdeleteNotice(delete); 
+		return new ResponseEntity<Boolean>( pwdCheck, HttpStatus.OK);
+	}
+	
+	/**
+	 * 댓글 수정
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/modifyList")
+	public @ResponseBody ResponseEntity<Boolean> updateAnswer(NoticeAnswer list) {
+	 answerService.updateAnswer(list);
+		return new ResponseEntity<Boolean>(HttpStatus.OK);
+	}
+	
+	/**
+	 * 댓글 삭제 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/deleteAnswer")
+	public @ResponseBody ResponseEntity<Boolean> deleteAnswerCnt(NoticeAnswer delete) {
+		Boolean pwdCheck = answerService.deleteAnswerCnt(delete);
 		return new ResponseEntity<Boolean>( pwdCheck, HttpStatus.OK);
 	}
 	

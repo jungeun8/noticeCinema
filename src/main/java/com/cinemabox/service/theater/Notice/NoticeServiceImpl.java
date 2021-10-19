@@ -54,9 +54,11 @@ public class NoticeServiceImpl implements NoticeService {
 	public void addNoticeAnswer(NoticeAnswerDto notice) {
 		// 공지 답글 등록
 		noticeDao.insertNoticeAnswer(notice);
+//		int newSeq = notice.getSeq();
+//		newSeq += newSeq;
 		NoticeSeqDto noticeSeqParam = new NoticeSeqDto();
-		noticeSeqParam.setParNo(notice.getParNo());
 		noticeSeqParam.setSeq(notice.getSeq());
+		noticeSeqParam.setParNo(notice.getParNo());
 		noticeDao.updateNoticeSeq(noticeSeqParam);
 	};
 	

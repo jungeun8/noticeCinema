@@ -2,7 +2,8 @@ package com.cinemabox.dao.Notice;
 
 import java.util.List;
 
-import com.cinemabox.dto.Notice.NoticeAnswerDto;
+import com.cinemabox.dto.Notice.AnswerDto;
+import com.cinemabox.dto.Notice.NoticeListDto;
 import com.cinemabox.vo.NoticeAnswer;
 
 public interface AnswerDao {
@@ -11,13 +12,26 @@ public interface AnswerDao {
 	 * 전체답글 조회
 	 * @return
 	 */
-	List<NoticeAnswer> getAllAnswer();
+	List<NoticeAnswer> getAllAnswer(AnswerDto answer);
+	
+	/**
+	 * 공지사항 페이지수 
+	 * @param searchData
+	 * @return
+	 */
+	int getPageAllCnt();
 
 	/**
 	 * 댓글 수정하기 
 	 * @return
 	 */
-	NoticeAnswer getModifyAnswer(NoticeAnswer no);
+	NoticeAnswer getModifyAnswer(NoticeAnswer modify);
+	
+	/**
+	 * 수정
+	 * @param list
+	 */
+	void updateAnswer(NoticeAnswer list);
 	
 	/**
 	 * 댓글 등록
@@ -26,9 +40,16 @@ public interface AnswerDao {
 	void insertAnswer(NoticeAnswer addNotice);
 	
 	/**
+	 *  지정된 번호로 공지 내용 삭제하기 
+	 * @param no
+	 */
+	void deleteAnswer(int answerNo);
+	
+	
+	/**
 	 *  지정된 번호로 댓글 삭제하기 
 	 * @param no
 	 */
-	void deletrAnswer(int no);
+	Integer deleteAnswerCnt(NoticeAnswer delete);
 	
 }

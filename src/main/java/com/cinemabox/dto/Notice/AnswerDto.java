@@ -3,16 +3,13 @@ package com.cinemabox.dto.Notice;
 import lombok.Data;
 
 @Data
-public class ComentDto {
+public class AnswerDto {
 	
-	private int no;
-	private String coment;
-	private String id;
-	private String pwd;
-	private int noticeNo;
 	private int page = 1;
 	private int startPage = 1;
 	private int endPage = 10;
-	
+	private int no;
+	private int answerNo;
+	private String content;
 
 }

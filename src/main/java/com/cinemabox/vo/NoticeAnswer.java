@@ -6,11 +6,11 @@ import lombok.Data;
 @Data
 public class NoticeAnswer {
 
-	private int no;
+	private int answerNo;
 	private String content;
 	private Date answerDate;
 	private String id;
 	private String pwd;
-	private int noticeNo;
+	private int no;
 	
 }

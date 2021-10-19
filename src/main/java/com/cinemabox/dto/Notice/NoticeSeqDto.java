@@ -6,5 +6,6 @@ import lombok.Data;
 public class NoticeSeqDto {
 	private int parNo;
 	private int seq;
+	private int no;
 	
 }

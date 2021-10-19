@@ -4,169 +4,79 @@
 
 <mapper namespace="com.cinemabox.dao.Notice.AnswerDao">
 
-	<select id="getNoticeAll" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="com.cinemabox.vo.Notice">
+	<select id="getAllAnswer" parameterType="com.cinemabox.dto.Notice.AnswerDto"  resultType="com.cinemabox.vo.NoticeAnswer">
 	   select 
    			num,
 		    no,
-		    division,
-		    title,
-		    creatDate,
-		    hits,
-		    noticeId,
-		    noitcePwd,
-            parNo,
-            depth,
-            seq
+		    answerDate,
+		    content,
+		    id,
+		    pwd,
+            answerNo
         from (
             select 
-   		        notice_no				no,
-		        notice_division			division,
-		        notice_title			title,
-		        notice_date				creatDate,
-		        notice_hits				hits,
-		        notice_id				noticeId,
-		        notice_pwd				noitcePwd,
-                notice_par_no			parNo,
-                notice_depth 			depth,
-                notice_seq_no 			seq,
-                ROW_NUMBER() OVER (order by notice_par_no desc,notice_seq_no) numno,
-                ROW_NUMBER() OVER (order by notice_par_no ,notice_seq_no ) num
-            from cinemabox_notice
-            where 
-			    notice_title like '%${searchWord}%' 
-            order by parNo desc, seq
+   		        answer_no				answerNo,
+		        answer_content			content,
+		        answer_date				answerDate,
+		        answer_id				id,
+		        answer_pwd				pwd,
+                answer_noticeNo			no,
+                ROW_NUMBER() OVER (order by answer_no desc) num
+            from cinemabox_answer
             )
-		where numno between ${startPage} and ${endPage}
+			where num between ${startPage} and ${endPage}
+			and no = #{no}
 	</select>
 	
-	<select id="getPageAllCnt" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="int">
+	<select id="getPageAllCnt" resultType="int">
 		select 
-		   ceil(count(*)/5)
+		   ceil(count(*)/10)
 		from
-		    cinemabox_notice
-	  where 
-		    notice_title like '%${searchWord}%' 
+		    cinemabox_answer
 	</select>
 	
-	<select id="noticeMain" resultType="com.cinemabox.vo.Notice">
-		select
-	        notice_no				no,
-	        notice_division			division,
-	        notice_title			title,
-	        notice_date				creatDate,
-	        notice_hits				hits   
-		from(select * from cinemabox_notice order by notice_date desc)
-		where ROWNUM &lt;= 4
-	</select> 
-	
-	
-	<select id="getDetailNoticeByNo" parameterType="int" resultType="com.cinemabox.dto.Notice.NoticeDetailDto">
-		select *
-		from
-			(select
-                notice_no				no,
-                notice_content			content,
-                notice_title			title,
-                notice_date				creatDate,
-                notice_hits				hits,
-                LEAD(notice_no)over(order by notice_no desc) as preNo,
-                LEAD(notice_title)over(order by notice_no desc) as preTitle,
-                LAG(notice_no)over(order by notice_no desc) as  nextNo,
-                LAG(notice_title)over(order by notice_no desc) as nextTitle,
-                notice_par_no as parNo,
-                notice_seq_no as seq,
-                notice_depth as depth
-			from cinemabox_notice
-			)A
-        where 
-           A. no= #{no}
-	</select>
-	
-	<select id="getModifyNotice" parameterType="com.cinemabox.vo.Notice" resultType="com.cinemabox.vo.Notice">
+	<select id="getModifyAnswer" parameterType="com.cinemabox.vo.NoticeAnswer" resultType="com.cinemabox.vo.NoticeAnswer">
 		select 
-				notice_no				no,
-                notice_content			content,
-                notice_title			title,
-                notice_date				creatDate,
-                notice_hits				hits,
-                notice_id				noticeId,
-		        notice_pwd				noitcePwd
+				answer_no				answerNo,
+		        answer_content			content,
+		        answer_date				answerDate,
+		        answer_id				id,
+		        answer_pwd				pwd,
+                answer_noticeNo			no
 		from 
-			 cinemabox_notice
+			 cinemabox_answer
         where 
-           notice_no = #{no} and  notice_pwd = #{noitcePwd}
+           answer_no = #{no} and  answer_pwd = #{pwd}
 	</select>
 
-	<insert id="insertNotice" parameterType="com.cinemabox.dto.Notice.NoticeDto">
-		insert into cinemabox_notice
-		(notice_no, notice_division, notice_title, notice_content, notice_date, notice_id, notice_pwd, notice_par_no)
+	<insert id="insertAnswer" parameterType="com.cinemabox.vo.NoticeAnswer">
+		insert into  cinemabox_answer
+		(answer_no, answer_content, answer_date, answer_id, answer_pwd, answer_noticeNo)
 		values
-		(notice_seq.nextval, #{division},  #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd}, notice_seq.nextval)
+		(answer_seq.nextval, #{content}, sysDate, #{id}, #{pwd}, #{no})
 	</insert>
-	
-	<insert id="insertNoticeAnswer" parameterType="com.cinemabox.dto.Notice.NoticeAnswerDto">
-		insert into cinemabox_notice
-		(notice_no, notice_title, notice_content, notice_date, notice_id, notice_pwd, notice_par_no, notice_depth, notice_seq_no )
-		values
-		(notice_seq.nextval, #{title}, #{content},  sysDate, #{noticeId}, #{noitcePwd}, #{parNo}, #{depth}+1, #{seq}) 		
-	</insert>
-	
-	<update id="updateNoticeSeq" parameterType="com.cinemabox.dto.Notice.NoticeSeqDto">
-		update cinemabox_notice 
-		set notice_seq_no = notice_seq_no + 1
+
+	<update id="updateAnswer" parameterType="com.cinemabox.vo.NoticeAnswer">
+		update cinemabox_answer
+		set 
+		        answer_content = #{content}
 		where
-			notice_depth != 0 and
-			notice_par_no = #{parNo}
-			and notice_seq_no > (#{seq}-1)
+			answer_no = #{answerNo}
 	</update>
 	
-	<delete id="deleteNotice" parameterType="int">
+	<delete id="deleteAnswer" parameterType="int">
 		delete from
-			cinemabox_notice
+			cinemabox_answer
 		where
-			notice_no = #{no}
+			answer_no = #{answerNo}
 	</delete>
 	
-	<select  id="getdeleteNotice" parameterType="com.cinemabox.vo.Notice" resultType="int"> 
-		select count(*) 
-		from cinemabox_notice
-		where notice_no = #{no} and notice_pwd = #{noitcePwd}
-	</select>
-	
-	<update id="increaseHit" parameterType="int">
-		update
-			cinemabox_notice
-		set
-			notice_hits = notice_hits + 1
-		where
-			notice_no = #{no}
-	</update>
-	
-	
-	
-	<update id="changeNotice" parameterType="com.cinemabox.dto.Notice.NoticeDetailDto">
-		update
-			cinemabox_notice
-		set
-			notice_content	= #{content},	
-			notice_title	= #{title},
-			notice_id	= #{noticeId},	
-			notice_pwd	= #{noitcePwd}
-		where
-			notice_no = #{no}
-	</update>
-	
-	<select id="getNoticeCountByName" parameterType="com.cinemabox.vo.Notice" resultType="int">
-		select 
-			count(*)
+	<select id="deleteAnswerCnt" parameterType="com.cinemabox.vo.NoticeAnswer" resultType="int">
+		select count(*)
 		from
-			cinemabox_notice
-		where		
-			notice_pwd = #{noitcePwd} 
-			and notice_no = #{no}
+			cinemabox_answer
+		where
+			answer_no = #{answerNo} and answer_pwd = #{pwd}
 	</select>
 	
-	
-
-
 </mapper>

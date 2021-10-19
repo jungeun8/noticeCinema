@@ -13,6 +13,7 @@ public class NoticeAnswerDto {
 	private int parNo;
 	private int depth;
 	private int seq;
+	private int no;
 
 	
 }

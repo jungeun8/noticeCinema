@@ -81,6 +81,7 @@
     						<input type="password" class="form-control" id="password" name="password" placeholder="비밀번호">**삭제시 비밀번호를 입력하세요
  						</div>
  					<!-- 댓글 구현 -->
+ 					
  						<div class="row mb-3">
 							<div class="col-12">
 								<table class="table mb-3" style="margin:auto">
@@ -92,29 +93,29 @@
 									<tbody>
 										<tr class="content">
 											<td colspan="3" >
-											<h6>작성자</h6>
-											<div class="btn-group">
-											  <button style="float: right;" class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">더보기</button>
-											  <ul class="dropdown-menu">
-											   <li>수정</li>
-											   <li>삭제</li>
-											  </ul>
-											</div>
-											<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value=""/>댓글 내용</pre>
-											<h6><fmt:formatDate value="${noticeDetail.creatDate }" pattern="yyyy.MM.dd"/></h6></td>	
+											<c:forEach items="${list }" var="list">
+											<button style="text-align: right;" class="btn btn-sm" id="more">더보기</button>
+											<form id="notice-form" name="insertForm" method="post" action="../notice/answerInsert">
+											 <input type="hidden" name="deleteNo" id="deleteNo" value="${noticeDetail.no }"> 
+											  <input type="hidden" name="listNo" id="listNo" value="${list.no }"> 
+											<h6>${list.id }</h6>
+											<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value=""/>${list.content }</pre>
+											<h6><fmt:formatDate value="${list.answerDate }" pattern="yyyy.MM.dd"/></h6></td>	
+											</c:forEach>
 										</tr>
+										</form>
 									</tbody>
 								</table>
 								<div class="" style="padding-bottom: 60px;">
-  							<label for="exampleFormControlTextarea1" class="form-label">댓글을 달아주세요 ** 작성자와 비밀번호를 입력해주세요**</label>
-  							<div>
-  							<input type="text" id="noticeId" name="noticeId" placeholder="작성자" value=""  maxlength="4" autofocus="autofocus">
-  							<input type="password" id="noitcePwd" name="noitcePwd" placeholder="비밀번호" value=""  maxlength="10" autofocus="autofocus">
-  							</div>
-  							<textarea class="form-control" id="content" name="content" maxlength="300" rows="3"  autofocus="autofocus"></textarea>
-  							<button type="button" class="btn btn-light" style="float: right;" onclick="checkForm()">등록</button>
-  							<p id="textCount" name="textCount">(0 / 최대 300자)</p>
-						</div>
+  									<label for="exampleFormControlTextarea1" class="form-label">댓글을 달아주세요 ** 작성자와 비밀번호를 입력해주세요**</label>
+		  							<div>
+			  							<input type="text" id="noticeId" name="noticeId" placeholder="작성자" value=""  maxlength="4" autofocus="autofocus">
+			  							<input type="password" id="noitcePwd" name="noitcePwd" placeholder="비밀번호" value=""  maxlength="10">
+		  							</div>
+	  								<textarea class="form-control" id="content" name="content" maxlength="300" rows="3"></textarea>
+	  								<button type="submit" class="btn btn-light" style="float: right;" onclick="checkForm()">등록</button>
+	  								<p id="textCount" name="textCount">(0 / 최대 300자)</p>
+								</div>
 							</div>
 						</div>
 				<div style="text-align: right;">
@@ -123,12 +124,167 @@
 					<button type="button" class="btn btn-warning"  onclick="location.href='confirm?no=${noticeDetail.no}'">수정</button>
 					<button type="button" class="btn btn-warning" id="delete" onclick="">삭제</button>
 				</div>
+				
+					<div style="margin-left: 30%; margin-top: 15px;"> 
+						<nav aria-label="Page navigation example">
+		 					<ul class="pagination" >
+		 					<% 
+		 					int nowPage = (int)request.getAttribute("page"); // 현재페이지 
+		 					int pageAllCnt =(int)request.getAttribute("pageAllCnt");	// 총페이지
+		 					int firstPage = (((nowPage-1)/10)*10)+1; // 각 행의 첫번째 페이지 계산
+		 					%>
+		 					<li class="page-item" id="paging"><a class="page-link" href="../notice/detail?page=1"  aria-label="firstPrevious"><span aria-hidden="true">처음</span></a></li>
+							<li class="page-item"><a class="page-link" href="../notice/detail?page=<%=firstPage-10<1?1:firstPage-10 %>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+						  	 	<% 
+						  	 		/* int firstPage = (int)request.getAttribute("startPage"); */
+									/* int pageAllCnt123 =(int)request.getAttribute("pageAllCnt");	// 총페이지 */
+						  	  		/* int nowPage = (int)request.getAttribute("page"); // 현재페이지  */
+						  	 	 /* 	String searchWord = (String)request.getAttribute("searchWord"); */
+						  	 	 /* 	int startPage = ((nowPage/5)*5)+1; // 첫번째 페이지 계산 */
+									for(int i=firstPage; i<firstPage+10; i++){ 
+										if(i>pageAllCnt) break;	// 만약에 총페이지 수보다 커지면 중지
+										if(nowPage==i){
+											%>
+											<li class="page-item" id="paging"><a class="page-link" style="background-color:#ffc007" href="../notice/detail?page=<%=i%>"><%=i%></a></li>
+											<%
+										}else{
+											%>
+											<li class="page-item" id="paging"><a class="page-link" href="../notice/detail?page=<%=i%>"><%=i%></a></li>
+											<%
+										}
+									}
+								%>
+								<% System.out.println("nowPage : " + nowPage); %>
+								<% System.out.println("pageAllCnt123 : " + pageAllCnt); %>
+								<% if((( (nowPage-1)/10 ) *10 )+10 < pageAllCnt){ // 맨 마지막 페이지가 화면에 보여지는 마지막 페이지보다 클 경우에만 보이도록 %> 
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/detail?page=<%=firstPage+10>pageAllCnt?pageAllCnt:firstPage+10 %>" aria-label="Next"><span aria-hidden="true">
+		    				&raquo;
+		    				</span></a></li> <% } %>
+		    				<li class="page-item" id="paging"><a class="page-link" href="../notice/detail?page=<%=pageAllCnt %>"  aria-label="lastNext"><span aria-hidden="true">끝</span></a></li> 
+		  					</ul>
+						</nav>
+					</div>
+					<% 
+		 					
+		 					int answerNo =(int)request.getAttribute("answerNo");	
+		 					%>
+		 			<!--모달창 -->
+					<div class="modal fade" id="form-more-modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalLabel">수정/삭제</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+							
+								<div class="modal-body">
+									 <form id="form-movie">
+										<div class="row px-3 mb-3">
+											<label for="floatingInput">수정하기</label>
+											 <input type="text" class="form-control" id="modifyContent" name="modifyContent" value=""/>
+										</div>
+										<div class="row px-3 mb-3">
+											<label for="floatingInput">비밀번호 입력</label>
+											<input type="password" class="form-control" id="passwordModal" name="passwordModal" placeholder="비밀번호">
+											 <input type="hidden" name="deleteNo1" id="deleteNo1" value="<%=answerNo %>"> 
+										</div>
+									</form>
+								</div>
+						
+								
+					<div class="modal-footer">
+						<button type="button" class="btn btn-warning" id="insert-modal">등록</button>
+						<button type="button" class="btn btn-warning" id="delete-modal">삭제 </button>
+				</div>
+			</div>
+		</div>
+	</div>
+					
+					
+					
+					
 			</div>		
 	</div>
 	<%@ include file="../common/footer.jsp"%>
 	
 </div>
 <script type="text/javascript">
+var listModal = new bootstrap.Modal(document.getElementById("form-more-modal"), {
+	keyboard: false
+})
+
+//더보기 버튼을 클릭했을 때 실행된다.
+$("#more").click(function() {
+	
+	listModal.show();
+});	
+
+//배정모달창에서 등록 버튼을 클릭했을 때 실행된다.
+$("#insert-modal").click(function() {
+	var passwordModal = $.trim($("#passwordModal").val());
+	if (!passwordModal) {
+		alert("비밀번호를 선택해주세요.");
+		$("#passwordModal").focus();
+		return false;
+	}
+	$.ajax({
+		type: "POST",
+		url: "/cinemabox/notice/modifyList",
+		data: {noitcePwd: $("#passwordModal").val(),
+				answerNo: $("#answerNo").val(),
+				deleteNo: $("#deleteNo1").val()},
+		error : function(error) {
+	        alert("Error!");
+	    },
+		success : function(result){
+			if(result) { 
+			alert("등록되었습니다.");
+		}else {
+			alert("비밀번호가 틀렸습니다"); 
+			}
+		},
+	    complete : function() {
+	      /*   alert("삭제되었습니다."); 
+	        location.href='delete?no='+no; */
+	    }
+	});
+})
+
+//배정모달창에서 삭제 버튼을 클릭했을 때 실행된다.
+$("#insert-modal").click(function() {
+	var passwordModal = $.trim($("#passwordModal").val());
+	if (!passwordModal) {
+		alert("비밀번호를 선택해주세요.");
+		$("#passwordModal").focus();
+		return false;
+	}
+	$.ajax({
+		type: "POST",
+		url: "/cinemabox/notice/deleteAnswer",
+		data: {noitcePwd: $("#passwordModal").val(),
+			answerNo: $("#answerNo").val(),
+			deleteNo: $("#deleteNo1").val()},
+		error : function(error) {
+	        alert("Error!");
+	    },
+		success : function(result){
+			if(result) { 
+			location.href='deleteComent?answerNo='+$("#deleteNo1").val();
+			alert("삭제되었습니다");
+		}else {
+			alert("비밀번호가 틀렸습니다"); 
+			}
+		},
+	    complete : function() {
+	      /*   alert("삭제되었습니다."); 
+	        location.href='delete?no='+no; */
+	    }
+	});
+})
+
+
+
+
 $("#delete").click(function() {
 	if($("#password").val()==""){ // 비밀번호가 없는 경우
 		alert("비밀번호를 입력해주세요!!");

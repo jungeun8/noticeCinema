@@ -113,11 +113,11 @@
 	
 	<update id="updateNoticeSeq" parameterType="com.cinemabox.dto.Notice.NoticeSeqDto">
 		update cinemabox_notice 
-		set notice_seq_no = notice_seq_no + 1
+		set notice_seq_no = notice_seq_no + 1 
 		where
 			notice_depth != 0 and
 			notice_par_no = #{parNo}
-			and notice_seq_no > (#{seq}-1)
+			and notice_seq_no > 0
 	</update>
 	
 	<delete id="deleteNotice" parameterType="int">
