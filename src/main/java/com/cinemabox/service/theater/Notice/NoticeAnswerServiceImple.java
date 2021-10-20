@@ -23,16 +23,21 @@ public class NoticeAnswerServiceImple implements NoticeAnswerService{
 	}
 	
 	@Override
-	public NoticeAnswer getModifyAnswer(NoticeAnswer modify){
+	public Boolean getModifyAnswer(NoticeAnswer modify){
 		// 답변 수정하기 위해 확인
-		return answerDao.getModifyAnswer(modify);
+		int existNotice = answerDao.getModifyAnswer(modify);
+		if(existNotice > 0) {
+			return true;
+		}else {
+			return false;
+		}
 		
 	}
 	
 	@Override
-	public void updateAnswer(NoticeAnswer list){
+	public int updateAnswer(NoticeAnswer list){
 		// 딥뱐 수정
-		answerDao.updateAnswer(list);
+		return answerDao.updateAnswer(list);
 		
 	}
 	@Override
@@ -41,9 +46,9 @@ public class NoticeAnswerServiceImple implements NoticeAnswerService{
 		answerDao.insertAnswer(addNotice);
 	}
 	@Override
-	public void deleteAnswer(int answerNo){
+	public int deleteAnswer(int answerNo){
 		// 답변삭제 
-		answerDao.deleteAnswer(answerNo);
+		return answerDao.deleteAnswer(answerNo);
 	}
 	@Override
 	public boolean deleteAnswerCnt(NoticeAnswer delete) {

@@ -78,6 +78,9 @@
 						 <div class="col-4  mb-5">
     						<label for="inputPassword" class="visually-hidden">비밀번호</label>
     						 <input type="hidden" name="deleteNo" id="deleteNo" value="${noticeDetail.no }"> 
+    						 <input type="hidden" name="parNo" id="parNo" value="${noticeDetail.parNo }"> 
+    						 <input type="hidden" name="seq" id="seq" value="${noticeDetail.seq }"> 
+    						 <input type="hidden" name="depth" id="depth" value="${noticeDetail.depth }"> 
     						<input type="password" class="form-control" id="password" name="password" placeholder="비밀번호">**삭제시 비밀번호를 입력하세요
  						</div>
  					<!-- 댓글 구현 -->
@@ -91,30 +94,35 @@
 										</tr>
 									</thead>
 									<tbody>
+									<c:forEach items="${list }" var="list" varStatus="status">
 										<tr class="content">
 											<td colspan="3" >
-											<c:forEach items="${list }" var="list">
-											<button style="text-align: right;" class="btn btn-sm" id="more">더보기</button>
-											<form id="notice-form" name="insertForm" method="post" action="../notice/answerInsert">
+											<div style="display: flex; justify-content: end">
+											<button style="position: absolute;" class="btn btn-sm" onclick="moreClick(this);">더보기</button>
+											</div>
 											 <input type="hidden" name="deleteNo" id="deleteNo" value="${noticeDetail.no }"> 
 											  <input type="hidden" name="listNo" id="listNo" value="${list.no }"> 
-											<h6>${list.id }</h6>
-											<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value=""/>${list.content }</pre>
+											  <input type="hidden" name="answerNo" id="answerNo" value="${list.answerNo }"> 
+											<h6>작성자:${list.id }</h6>
+											<div id="contentAnswer" name="contentAnswer"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${list.content }"/></pre></div>
 											<h6><fmt:formatDate value="${list.answerDate }" pattern="yyyy.MM.dd"/></h6></td>	
-											</c:forEach>
+											
 										</tr>
-										</form>
+										</c:forEach>
 									</tbody>
 								</table>
 								<div class="" style="padding-bottom: 60px;">
   									<label for="exampleFormControlTextarea1" class="form-label">댓글을 달아주세요 ** 작성자와 비밀번호를 입력해주세요**</label>
+		  							<form id="notice-form" name="insertForm" method="post" action="../notice/answerInsert">
 		  							<div>
-			  							<input type="text" id="noticeId" name="noticeId" placeholder="작성자" value=""  maxlength="4" autofocus="autofocus">
-			  							<input type="password" id="noitcePwd" name="noitcePwd" placeholder="비밀번호" value=""  maxlength="10">
+			  							<input type="text" id="id" name="id" placeholder="작성자" value=""  maxlength="4">
+			  							<input type="password" id="pwd" name="pwd" placeholder="비밀번호" value=""  maxlength="10">
+			  							<input type="hidden" name="no" id="no" value="${no }"> 
 		  							</div>
 	  								<textarea class="form-control" id="content" name="content" maxlength="300" rows="3"></textarea>
 	  								<button type="submit" class="btn btn-light" style="float: right;" onclick="checkForm()">등록</button>
 	  								<p id="textCount" name="textCount">(0 / 최대 300자)</p>
+	  								</form>
 								</div>
 							</div>
 						</div>
@@ -164,8 +172,7 @@
 		  					</ul>
 						</nav>
 					</div>
-					<% 
-		 					
+							<% 
 		 					int answerNo =(int)request.getAttribute("answerNo");	
 		 					%>
 		 			<!--모달창 -->
@@ -180,13 +187,14 @@
 								<div class="modal-body">
 									 <form id="form-movie">
 										<div class="row px-3 mb-3">
-											<label for="floatingInput">수정하기</label>
+											<label for="floatingInput">수정하기</label>	
 											 <input type="text" class="form-control" id="modifyContent" name="modifyContent" value=""/>
 										</div>
 										<div class="row px-3 mb-3">
 											<label for="floatingInput">비밀번호 입력</label>
 											<input type="password" class="form-control" id="passwordModal" name="passwordModal" placeholder="비밀번호">
-											 <input type="hidden" name="deleteNo1" id="deleteNo1" value="<%=answerNo %>"> 
+											 <input type="hidden" name="deleteNo1" id="deleteNo1" value="<%=answerNo %>">
+											 <input type="hidden" name="answerNowNo" id="answerNowNo" value="">  
 										</div>
 									</form>
 								</div>
@@ -214,31 +222,34 @@ var listModal = new bootstrap.Modal(document.getElementById("form-more-modal"), 
 })
 
 //더보기 버튼을 클릭했을 때 실행된다.
-$("#more").click(function() {
-	
+function moreClick(e){
+	$("#modifyContent").val(e.parentElement.parentElement.children[5].children[0].textContent);
+	$("#passwordModal").val("");
+	$("#answerNowNo").val(e.parentElement.parentElement.children[3].value);
 	listModal.show();
-});	
+}
 
-//배정모달창에서 등록 버튼을 클릭했을 때 실행된다.
+//모달창에서 등록 버튼을 클릭했을 때 실행된다.
 $("#insert-modal").click(function() {
 	var passwordModal = $.trim($("#passwordModal").val());
 	if (!passwordModal) {
-		alert("비밀번호를 선택해주세요.");
+		alert("비밀번호를 입력해주세요.");
 		$("#passwordModal").focus();
 		return false;
 	}
 	$.ajax({
 		type: "POST",
 		url: "/cinemabox/notice/modifyList",
-		data: {noitcePwd: $("#passwordModal").val(),
-				answerNo: $("#answerNo").val(),
-				deleteNo: $("#deleteNo1").val()},
+		data: {pwd: $("#passwordModal").val(),
+				answerNo: $("#answerNowNo").val(),
+				content: $("#modifyContent").val()},
 		error : function(error) {
 	        alert("Error!");
 	    },
 		success : function(result){
 			if(result) { 
 			alert("등록되었습니다.");
+			listModal.hide();
 		}else {
 			alert("비밀번호가 틀렸습니다"); 
 			}
@@ -250,27 +261,27 @@ $("#insert-modal").click(function() {
 	});
 })
 
-//배정모달창에서 삭제 버튼을 클릭했을 때 실행된다.
-$("#insert-modal").click(function() {
+//모달창에서 삭제 버튼을 클릭했을 때 실행된다.
+$("#delete-modal").click(function() {
 	var passwordModal = $.trim($("#passwordModal").val());
 	if (!passwordModal) {
-		alert("비밀번호를 선택해주세요.");
+		alert("비밀번호를 입력해주세요.");
 		$("#passwordModal").focus();
 		return false;
 	}
+	
 	$.ajax({
 		type: "POST",
 		url: "/cinemabox/notice/deleteAnswer",
-		data: {noitcePwd: $("#passwordModal").val(),
-			answerNo: $("#answerNo").val(),
-			deleteNo: $("#deleteNo1").val()},
+		data: {pwd: $("#passwordModal").val(),
+			answerNo: $("#answerNowNo").val()},
 		error : function(error) {
-	        alert("Error!");
+	        alert("비밀번호가 틀렸습니다");
 	    },
 		success : function(result){
 			if(result) { 
-			location.href='deleteComent?answerNo='+$("#deleteNo1").val();
 			alert("삭제되었습니다");
+			listModal.hide();
 		}else {
 			alert("비밀번호가 틀렸습니다"); 
 			}
@@ -284,7 +295,7 @@ $("#insert-modal").click(function() {
 
 
 
-
+// 글 삭제
 $("#delete").click(function() {
 	if($("#password").val()==""){ // 비밀번호가 없는 경우
 		alert("비밀번호를 입력해주세요!!");
@@ -294,16 +305,30 @@ $("#delete").click(function() {
 		type: "POST",
 		url: "/cinemabox/notice/deleteList",
 		data: {noitcePwd: $("#password").val(),
-				no: $("#deleteNo").val()},
+				no: $("#deleteNo").val(),
+				parNo : $("#parNo").val(),
+				depth : $("#depth").val(),
+				seq : $("#seq").val()},
 		error : function(error) {
 	        alert("Error!");
 	    },
 		success : function(result){
-			if(result) { 
-			location.href='delete?no='+$("#deleteNo").val();
-			alert("삭제되었습니다");
-		}else {
-			alert("비밀번호가 틀렸습니다"); 
+			switch(result){
+				case "existComment" :
+					alert("댓글이 존재하는 게시글은 삭제가 불가능합니다.");
+					break;
+				case "existAnswer" :
+					alert("답글이 존재하는 게시글은 삭제가 불가능합니다.");
+					break;
+				case "notPwd" :
+					alert("비밀번호가 일치하지 않습니다.");
+					break;
+				case "success" :
+					location.href='delete?no='+$("#deleteNo").val();
+					alert("삭제 되었습니다.");
+					break;
+				default :
+					alert("오류가 발생하였습니다. 관리자에게 문의하여 주십시오."+result);
 			}
 		},
 	    complete : function() {
@@ -317,7 +342,6 @@ $("#delete").click(function() {
  $(function() {
 		// 입력값 유효성 체크해서 전부 값이 입력되어 있을 때만 폼 입력값이 서버로 제출되게 하기
 		$("#notice-form").submit(function() {
-			
 			var content = $("#content").val();
 			if (!content) {
 				alert("내용을 입력해주세요.");
@@ -328,27 +352,27 @@ $("#delete").click(function() {
 				 $("#content").focus();
 		    	  return false;
 			}
-			var noticeId = $("#noticeId").val();
-			if(!noticeId){
+			var id = $("#id").val();
+			if(!id){
 		        alert("작성자를 입력해주세요.");
-		        $("#noticeId").focus();
+		        $("#id").focus();
 		    	  return false;
 			}
-		     var noitcePwd = $("#noitcePwd").val();
-		     var num = noitcePwd.search(/[0-9]/g);
-		     var eng = noitcePwd.search(/[a-z]/ig);
-		     var spe = noitcePwd.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
-		     if(!noitcePwd){
+		     var pwd = $("#pwd").val();
+		     var num = pwd.search(/[0-9]/g);
+		     var eng = pwd.search(/[a-z]/ig);
+		     var spe = pwd.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+		     if(!pwd){
 		        alert("비밀번호를 입력해주세요.");
-		        $("#noitcePwd").focus();
+		        $("#pwd").focus();
 		        return false;
 		     }
-		     else if(noitcePwd.search(/\s/) != -1){
+		     else if(pwd.search(/\s/) != -1){
 		    	 alert("비밀번호는 공백 없이 입력해주세요.");
 		    	 $(this).val("");
 		    	 $(this).focus();
 		    	 return false; 
-		     }else if(noitcePwd.length<6 || noitcePwd.length>10){
+		     }else if(pwd.length<6 || pwd.length>10){
 		    	  alert("비밀번호는 6자리에서 10자리 이내로 입력해주세요");
 		    	  $(this).val("");
 		     	  $(this).focus();
@@ -364,23 +388,23 @@ $("#delete").click(function() {
 		});
 	})
 
-	 $("#noticeId").keyup(function(e) {
-		 var noticeId = $("#noticeId").val();
-			if(noticeId.length>4){
-				$(this).val(noticeId.substring(0, 4));
+	 $("#id").keyup(function(e) {
+		 var id = $("#id").val();
+			if(id.length>4){
+				$(this).val(id.substring(0, 4));
 		    	 alert("작성자는 4자리 이내로 입력해주세요");
 		    	 $(this).focus();
 		    	 return false;
-			}else if(noticeId.search(/\s/) != -1){
+			}else if(id.search(/\s/) != -1){
 		    	  alert("작성자는 공백 없이 입력해주세요.");
 		    	  $(this).focus();
 		    	  return false;
 			}
 	   }); 
 
-	$("#noitcePwd").keyup(function(e) {
-		 var noitcePwd = $("#noitcePwd").val();
-			 if(noitcePwd.search(/\s/) != -1){
+	$("#pwd").keyup(function(e) {
+		 var pwd = $("#pwd").val();
+			 if(pwd.search(/\s/) != -1){
 		    	  alert("비밀번호는 공백 없이 입력해주세요.");
 		    	  $(this).focus();
 		    	  return false;
@@ -425,20 +449,20 @@ $("#delete").click(function() {
 	   
 
 
-	$("#noitcePwd").on('blur',function(){
-		 var noitcePwd = $("#noitcePwd").val();
-	     var num = noitcePwd.search(/[0-9]/g);
-	     var eng = noitcePwd.search(/[a-z]/ig);
-	     var spe = noitcePwd.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
-	     if(noitcePwd.length==0){
+	$("#pwd").on('blur',function(){
+		 var pwd = $("#pwd").val();
+	     var num = pwd.search(/[0-9]/g);
+	     var eng = pwd.search(/[a-z]/ig);
+	     var spe = pwd.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+	     if(pwd.length==0){
 	    	 return true
 	     }
-	     else if(noitcePwd.search(/\s/) != -1){
+	     else if(pwd.search(/\s/) != -1){
 	    	 alert("비밀번호는 공백 없이 입력해주세요.");
 	    	 $(this).val("");
 	    	 $(this).focus();
 	    	 return false; 
-	     }else if(noitcePwd.length<6 || noitcePwd.length>10){
+	     }else if(pwd.length<6 || pwd.length>10){
 	    	  alert("비밀번호는 6자리에서 10자리 이내로 입력해주세요");
 	    	  $(this).val("");
 	     	  $(this).focus();

@@ -34,19 +34,15 @@
 		from
 		    cinemabox_answer
 	</select>
+
 	
-	<select id="getModifyAnswer" parameterType="com.cinemabox.vo.NoticeAnswer" resultType="com.cinemabox.vo.NoticeAnswer">
+	<select id="getModifyAnswer" parameterType="com.cinemabox.vo.NoticeAnswer" resultType="int">
 		select 
-				answer_no				answerNo,
-		        answer_content			content,
-		        answer_date				answerDate,
-		        answer_id				id,
-		        answer_pwd				pwd,
-                answer_noticeNo			no
+				count(*)
 		from 
 			 cinemabox_answer
         where 
-           answer_no = #{no} and  answer_pwd = #{pwd}
+           answer_no = #{answerNo} and  answer_pwd = #{pwd}
 	</select>
 
 	<insert id="insertAnswer" parameterType="com.cinemabox.vo.NoticeAnswer">

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cinemabox.dto.Notice.AnswerDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
+import com.cinemabox.vo.Notice;
 import com.cinemabox.vo.NoticeAnswer;
 
 public interface AnswerDao {
@@ -20,18 +21,26 @@ public interface AnswerDao {
 	 * @return
 	 */
 	int getPageAllCnt();
+	
+	/**
+	 * 댓글 수 
+	 * @param searchData
+	 * @return
+	 */
+	int getComentCnt(int no);
+
 
 	/**
 	 * 댓글 수정하기 
 	 * @return
 	 */
-	NoticeAnswer getModifyAnswer(NoticeAnswer modify);
+	Integer getModifyAnswer(NoticeAnswer modify);
 	
 	/**
 	 * 수정
 	 * @param list
 	 */
-	void updateAnswer(NoticeAnswer list);
+	Integer updateAnswer(NoticeAnswer list);
 	
 	/**
 	 * 댓글 등록
@@ -43,7 +52,7 @@ public interface AnswerDao {
 	 *  지정된 번호로 공지 내용 삭제하기 
 	 * @param no
 	 */
-	void deleteAnswer(int answerNo);
+	Integer deleteAnswer(int answerNo);
 	
 	
 	/**

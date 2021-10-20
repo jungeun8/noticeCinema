@@ -10,4 +10,5 @@ public class NoticeDto {
 	private String division = "전체";
 	private String noticeId;
 	private String noitcePwd;
+	
 }

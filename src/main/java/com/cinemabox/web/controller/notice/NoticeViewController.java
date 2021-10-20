@@ -45,13 +45,16 @@ public class NoticeViewController {
 	@GetMapping("/list")
 	public String Notice(NoticeListDto searchData, Model model) {
 		int page = searchData.getPage();
-		searchData.setStartPage(((page-1)*5)+1);
-		searchData.setEndPage(5*page);
+		searchData.setStartPage(((page-1)*10)+1);
+		searchData.setEndPage(10*page);
 		System.out.println("searchData ==> "+searchData.toString());
 		// 공지사항 리스트 조회하기
 		List<Notice> noticeList = noticeService.getNoticeAll(searchData);
+		noticeList.get(0).toString();
 		int pageAllCnt = noticeService.getPageAllCnt(searchData);
 		System.out.println("controller pageAllCnt ====>" + pageAllCnt);
+		// 댓글 수 카운트
+//		int countComent = noticeService.getComentCnt();
 		// 뷰 페이지에 공지사항 목록 전달하기
 		model.addAttribute("noticeList", noticeList);
 		model.addAttribute("pageAllCnt", pageAllCnt);
@@ -62,6 +65,7 @@ public class NoticeViewController {
 		model.addAttribute("seq", searchData.getSeq());
 		model.addAttribute("parNo", searchData.getParNo());
 		model.addAttribute("depth", searchData.getDepth());
+//		model.addAttribute("countComent", countComent);
 		// 뷰페이지로 내부이동하기
 		// /WEB-INF/views/notice/noticeMain.jsp로 내부이동해서 JSP 실행시키기
 		return "notice/noticeMain";
@@ -82,6 +86,7 @@ public class NoticeViewController {
 		List<NoticeAnswer> list = answerService.getAllAnswer(answer);
 		int pageAllCnt = answerService.getPageAllCnt();
 	System.out.println("list 내용 보이기!!!!======>"+list);
+	
 		model.addAttribute("noticeDetail", noticeDetail);	
 		model.addAttribute("no", no);
 		model.addAttribute("seq", noticeDetail.getSeq());
@@ -130,7 +135,7 @@ public class NoticeViewController {
 	@RequestMapping("/answerInsert")
 	public String insertAnswer(NoticeAnswer addNotice, RedirectAttributes redirectAttributes) {
 		answerService.insertAnswer(addNotice);
-		return "notice/detailNotice";
+		return "redirect:list";
 	}
 
 	/**
@@ -235,8 +240,8 @@ public class NoticeViewController {
 	 */
 	@RequestMapping("/list/modify")
 	public @ResponseBody ResponseEntity<Integer> getNoticeCountByName(Notice param) {
-		int count = noticeService.getNoticeCountByName(param);
-		return new ResponseEntity<Integer>(count, HttpStatus.OK);
+		int result = noticeService.getNoticeCountByName(param);
+		return new ResponseEntity<Integer>(result, HttpStatus.OK);
 	}
 	
 	/**
@@ -245,9 +250,9 @@ public class NoticeViewController {
 	 * @return
 	 */
 	@RequestMapping("/deleteList")
-	public @ResponseBody ResponseEntity<Boolean> deleteList(Notice delete) {
-		Boolean pwdCheck = noticeService.getdeleteNotice(delete); 
-		return new ResponseEntity<Boolean>( pwdCheck, HttpStatus.OK);
+	public @ResponseBody ResponseEntity<String> deleteList(Notice delete) {
+		String resultMessage = noticeService.getdeleteNotice(delete); 
+		return new ResponseEntity<String>( resultMessage, HttpStatus.OK);
 	}
 	
 	/**
@@ -257,8 +262,18 @@ public class NoticeViewController {
 	 */
 	@RequestMapping("/modifyList")
 	public @ResponseBody ResponseEntity<Boolean> updateAnswer(NoticeAnswer list) {
-	 answerService.updateAnswer(list);
-		return new ResponseEntity<Boolean>(HttpStatus.OK);
+		Boolean result;
+		if(answerService.getModifyAnswer(list)) {
+			int resultModify = answerService.updateAnswer(list);
+			if(resultModify >0) {
+				result = true;
+			}else {
+				result = false;
+			}
+		}else{
+			result =false;
+		}
+		return new ResponseEntity<Boolean>(result,HttpStatus.OK);
 	}
 	
 	/**
@@ -267,9 +282,20 @@ public class NoticeViewController {
 	 * @return
 	 */
 	@RequestMapping("/deleteAnswer")
-	public @ResponseBody ResponseEntity<Boolean> deleteAnswerCnt(NoticeAnswer delete) {
-		Boolean pwdCheck = answerService.deleteAnswerCnt(delete);
-		return new ResponseEntity<Boolean>( pwdCheck, HttpStatus.OK);
+	public @ResponseBody ResponseEntity<Boolean> deleteAnswer(NoticeAnswer list) {
+		Boolean result;
+		if( answerService.deleteAnswerCnt(list)) { //만약 삭제할 데이터가 있다면
+			int resultDelete = answerService.deleteAnswer(list.getAnswerNo());
+			if(resultDelete > 0) {
+				result = true;
+			}else {
+				result = false;
+			}
+			
+		}else { // 데이터가 없는경우 false 반환
+			result = false;
+		}
+		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
 	}
 	
 }

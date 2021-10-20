@@ -6,17 +6,18 @@
 
 	<select id="getNoticeAll" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="com.cinemabox.vo.Notice">
 	   select 
-   			num,
-		    no,
-		    division,
-		    title,
-		    creatDate,
-		    hits,
-		    noticeId,
-		    noitcePwd,
-            parNo,
-            depth,
-            seq
+   			A.num,
+		    A.no,
+		    A.division,
+		    A.title,
+		    A.creatDate,
+		    A.hits,
+		    A.noticeId,
+		    A.noitcePwd,
+            A.parNo,
+            A.depth,
+            A.seq,
+            (select count(*) from cinemabox_answer where answer_noticeNo = A.no) as anwserCount 
         from (
             select 
    		        notice_no				no,
@@ -35,17 +36,38 @@
             where 
 			    notice_title like '%${searchWord}%' 
             order by parNo desc, seq
-            )
-		where numno between ${startPage} and ${endPage}
+            )A
+		where numno between ${startPage} and ${endPage} 
 	</select>
+	
 	
 	<select id="getPageAllCnt" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="int">
 		select 
-		   ceil(count(*)/5)
+		   ceil(count(*)/10)
 		from
 		    cinemabox_notice
 	  where 
 		    notice_title like '%${searchWord}%' 
+	</select>
+	
+	<select id="getComentCnt" parameterType="int" resultType="int">
+		select 
+		   count(*)
+		from
+		    cinemabox_notice A, cinemabox_answer B
+	  where 
+		   A.notice_no = B.answer_noticeNo and A.notice_no = #{no}
+	</select>
+	
+	<select id="getAnswerCnt" parameterType="com.cinemabox.vo.Notice" resultType="int">
+		select 
+		   count(*)
+		from
+		    cinemabox_notice
+	  where 
+		   notice_par_no = ${parNo}
+           and notice_depth > ${depth}
+           and notice_seq_no = ${seq} + 1
 	</select>
 	
 	<select id="noticeMain" resultType="com.cinemabox.vo.Notice">
@@ -112,12 +134,23 @@
 	</insert>
 	
 	<update id="updateNoticeSeq" parameterType="com.cinemabox.dto.Notice.NoticeSeqDto">
-		update cinemabox_notice 
+		<![CDATA[update cinemabox_notice 
 		set notice_seq_no = notice_seq_no + 1 
 		where
 			notice_depth != 0 and
 			notice_par_no = #{parNo}
-			and notice_seq_no > 0
+			and notice_seq_no > (#{seq}-1)
+			]]>
+	</update>
+	
+	<update id="updateNoticeSeqMinus" parameterType="int">
+		<![CDATA[           update cinemabox_notice 
+		set notice_seq_no = notice_seq_no - 1 
+		where
+			notice_depth != 0 and
+			notice_par_no = (select notice_par_no from cinemabox_notice where notice_no = #{no}) 
+			and notice_seq_no > (select notice_seq_no from cinemabox_notice where notice_no = #{no})
+			]]>
 	</update>
 	
 	<delete id="deleteNotice" parameterType="int">

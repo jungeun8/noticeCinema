@@ -5,7 +5,9 @@ import java.util.List;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.cinemabox.dao.Notice.AnswerDao;
 import com.cinemabox.dao.Notice.NoticeDao;
 import com.cinemabox.dto.Notice.NoticeAnswerDto;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
@@ -20,6 +22,7 @@ import com.cinemabox.vo.Notice;
 public class NoticeServiceImpl implements NoticeService {
 
 	@Autowired NoticeDao noticeDao;
+	@Autowired AnswerDao answerDao;
 	
 	@Override
 	public List<Notice> getNoticeAll(NoticeListDto searchData){
@@ -51,29 +54,40 @@ public class NoticeServiceImpl implements NoticeService {
 	
 
 	@Override
+	@Transactional
 	public void addNoticeAnswer(NoticeAnswerDto notice) {
 		// 공지 답글 등록
-		noticeDao.insertNoticeAnswer(notice);
-//		int newSeq = notice.getSeq();
-//		newSeq += newSeq;
 		NoticeSeqDto noticeSeqParam = new NoticeSeqDto();
+		notice.setSeq(notice.getSeq()+1);
 		noticeSeqParam.setSeq(notice.getSeq());
 		noticeSeqParam.setParNo(notice.getParNo());
 		noticeDao.updateNoticeSeq(noticeSeqParam);
+		noticeDao.insertNoticeAnswer(notice);
+//		int newSeq = notice.getSeq();
+//		newSeq += newSeq;
+		
 	};
 	
 	@Override
 	public void deleteNotice(int no) {
 		// 공지사항 삭제 
+		noticeDao.updateNoticeSeqMinus(no);
 		noticeDao.deleteNotice(no);
 	}
 	
 	@Override
-	public boolean getdeleteNotice(Notice param) {
+	public String getdeleteNotice(Notice param) {
+
+		// 댓글이 있는경우 
+		if(noticeDao.getComentCnt(param.getNo()) > 0 ) return "existComment";
+		
+		// 답글이 있는경우
+		if(noticeDao.getAnswerCnt(param) > 0 ) return "existAnswer";
+		
 		int existNotice = noticeDao.getdeleteNotice(param);
 		if (existNotice > 0) {
-			return true;
-		}else return false; 
+			return "success";
+		}else return "notPwd";  // 비밀번호가 틀린경우
 		
 	}
 	@Override
@@ -114,5 +128,14 @@ public class NoticeServiceImpl implements NoticeService {
 		// 수정 페이지 들어갈때 
 		return noticeDao.getModifyNotice(modifyNotice);
 	}
+	
+	@Override
+	public int getComentCnt(int no) {
+		
+		return noticeDao.getComentCnt(no);
+	}
 
+	
+
+	
 }

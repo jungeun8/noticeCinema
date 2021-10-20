@@ -12,7 +12,8 @@ import com.cinemabox.vo.Notice;
 public interface NoticeService {
 
 	List<Notice> getNoticeAll(NoticeListDto searchData);
-	// 공지사항 조회 
+	// 공지사항 전체 조회
+	
 	NoticeDetailDto detailNoticeByNo(int no);
 	// 공지사항 상세 조회 
 	void deleteNotice(int no);
@@ -33,7 +34,11 @@ public interface NoticeService {
 	// 수정글 수 체크
 	Notice getModifyNotice(Notice modifyNotice);
 	// 글 수정
-	boolean getdeleteNotice(Notice param);
+	String getdeleteNotice(Notice param);
+	
+	int getComentCnt(int no);
+	// 댓글 수
+	
 	
 
 	

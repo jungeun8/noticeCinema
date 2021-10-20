@@ -18,7 +18,14 @@ public interface NoticeDao {
 	 * @return no
 	 */
 	List<Notice> getNoticeAll(NoticeListDto searchData);
+	/**
+	 * 댓글 수 있으면 글을 삭제할 수 없음  
+	 * @param searchData 
+	 * @return no
+	 */
+	int getComentCnt(int no);
 	
+
 	/**
 	 * 번호로 공지사항 상세 조회 
 	 * @return
@@ -93,4 +100,17 @@ public interface NoticeDao {
 	 * @return
 	 */
 	int getdeleteNotice(Notice param);
+	
+	/**
+	 * 답변 수 
+	 * @param param
+	 * @return
+	 */
+	int getAnswerCnt(Notice param);
+	
+	/**
+	 *  공지 글 삭제시 시퀀스 줄이기 
+	 * @param no
+	 */
+	void updateNoticeSeqMinus(int no);
 }
