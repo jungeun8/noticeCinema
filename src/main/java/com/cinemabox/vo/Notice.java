@@ -20,6 +20,7 @@ public class Notice {
 	private int depth;
 	private int seq;
 	private int anwserCount;
+	private String parNum;
     
 
 }

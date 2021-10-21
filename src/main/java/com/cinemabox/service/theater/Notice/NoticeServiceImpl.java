@@ -33,12 +33,21 @@ public class NoticeServiceImpl implements NoticeService {
 				Notice item = notice.get(i); // 게시글 
 				item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
 				notice.set(i, item);
+				System.out.println("item의 결과===>"+ item.getParNum());
 			}
 		}
 		
 		// 공지사항을 반환한다.
 		return notice;
 	}
+	@Override
+	public List<Notice> getNoticeNo(NoticeListDto parName){
+		// 원글에만 번호 조회 
+		List<Notice> noticeNo = noticeDao.getNoticeNo(parName);
+		return noticeNo;
+	}
+	
+	
 	
 	@Override
 	public NoticeDetailDto detailNoticeByNo(int no) {

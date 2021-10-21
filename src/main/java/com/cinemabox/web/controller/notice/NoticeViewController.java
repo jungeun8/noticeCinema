@@ -50,7 +50,6 @@ public class NoticeViewController {
 		System.out.println("searchData ==> "+searchData.toString());
 		// 공지사항 리스트 조회하기
 		List<Notice> noticeList = noticeService.getNoticeAll(searchData);
-		noticeList.get(0).toString();
 		int pageAllCnt = noticeService.getPageAllCnt(searchData);
 		System.out.println("controller pageAllCnt ====>" + pageAllCnt);
 		// 댓글 수 카운트
@@ -79,6 +78,7 @@ public class NoticeViewController {
 	 */
 	@GetMapping("/detail")
 	public String details(AnswerDto answer,int no,  Model model) {
+		noticeService.increaseHit(no);
 		int page = answer.getPage();
 		answer.setStartPage(((page-1)*10)+1);
 		answer.setEndPage(10*page);

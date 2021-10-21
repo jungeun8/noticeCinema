@@ -25,6 +25,12 @@ public interface NoticeDao {
 	 */
 	int getComentCnt(int no);
 	
+	/**
+	 * 원글에만 번호 나오기 
+	 * @param parName
+	 * @return
+	 */
+	List<Notice> getNoticeNo(NoticeListDto parName);
 
 	/**
 	 * 번호로 공지사항 상세 조회 

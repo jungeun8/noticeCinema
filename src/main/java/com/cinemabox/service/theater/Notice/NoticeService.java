@@ -38,6 +38,9 @@ public interface NoticeService {
 	
 	int getComentCnt(int no);
 	// 댓글 수
+
+	List<Notice> getNoticeNo(NoticeListDto parName);
+	// 원글에만 번호 
 	
 	
 

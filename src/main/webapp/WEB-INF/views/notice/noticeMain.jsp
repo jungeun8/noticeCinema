@@ -78,8 +78,12 @@
 								<c:forEach var="noticeList" items="${noticeList }">
 									<tr>
 										<input type="hidden" name=noticeNo id="noticeNo" value="${noticeList.no }"/>
-										<td class="text-center">${noticeList.num }</td>
-										<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/>(${noticeList.anwserCount })</pre></a></td>
+										<c:choose >
+										<c:when test="${noticeList.parNum == 0 }"><td class="text-center">${noticeList.parNum = " "}</td></c:when>
+										<c:otherwise><td class="text-center">${noticeList.parNum }</td></c:otherwise >
+										</c:choose> 
+										<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }">
+										<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/>(${noticeList.anwserCount })</pre></a></td>
 										<td class="text-center"><fmt:formatDate value="${noticeList.creatDate }" pattern="yyyy.MM.dd"/></td>
 										<td class="text-center"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.noticeId }"/></pre></td>
 										<td class="text-end">${noticeList.hits }</td>

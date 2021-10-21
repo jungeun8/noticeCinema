@@ -5,7 +5,7 @@
 <mapper namespace="com.cinemabox.dao.Notice.NoticeDao">
 
 	<select id="getNoticeAll" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="com.cinemabox.vo.Notice">
-	   select 
+	  select 
    			A.num,
 		    A.no,
 		    A.division,
@@ -17,28 +17,46 @@
             A.parNo,
             A.depth,
             A.seq,
-            (select count(*) from cinemabox_answer where answer_noticeNo = A.no) as anwserCount 
+            (select count(*) from cinemabox_answer where answer_noticeNo = A.no) as anwserCount,
+            NVL(B.parNum ,0) as parNum
         from (
-            select 
-   		        notice_no				no,
-		        notice_division			division,
-		        notice_title			title,
-		        notice_date				creatDate,
-		        notice_hits				hits,
-		        notice_id				noticeId,
-		        notice_pwd				noitcePwd,
-                notice_par_no			parNo,
-                notice_depth 			depth,
-                notice_seq_no 			seq,
-                ROW_NUMBER() OVER (order by notice_par_no desc,notice_seq_no) numno,
-                ROW_NUMBER() OVER (order by notice_par_no ,notice_seq_no ) num
-            from cinemabox_notice
-            where 
-			    notice_title like '%${searchWord}%' 
-            order by parNo desc, seq
+                select 
+                    notice_no				no,
+                    notice_division			division,
+                    notice_title			title,
+                    notice_date				creatDate,
+                    notice_hits				hits,
+                    notice_id				noticeId,
+                    notice_pwd				noitcePwd,
+                    notice_par_no			parNo,
+                    notice_depth 			depth,
+                    notice_seq_no 			seq,
+                    ROW_NUMBER() OVER (order by notice_par_no desc,notice_seq_no) numno,
+                    ROW_NUMBER() OVER (order by notice_par_no ,notice_seq_no ) num
+                from cinemabox_notice
+                where 
+                    notice_title like '%${searchWord}%' 
+                order by parNo desc, seq
             )A
-		where numno between ${startPage} and ${endPage} 
+            LEFT OUTER JOIN (
+                select ROW_NUMBER() OVER (order by notice_par_no ,notice_seq_no ) parNum,
+                notice_no
+                from cinemabox_notice 
+                where notice_no = notice_par_no  
+            ) B
+            on (A.no = B.notice_no)
+		where numno between ${startPage} and ${endPage}
 	</select>
+	
+	
+	<select id="getNoticeNo" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="com.cinemabox.vo.Notice">
+		select ROW_NUMBER() OVER (order by notice_par_no ,notice_seq_no ) parName 
+		from cinemabox_notice 
+		where ${no}=  ${parNo} 
+		order by notice_par_no desc
+	</select>
+	
+	
 	
 	
 	<select id="getPageAllCnt" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="int">
