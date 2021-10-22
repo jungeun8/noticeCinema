@@ -119,4 +119,9 @@ public interface NoticeDao {
 	 * @param no
 	 */
 	void updateNoticeSeqMinus(int no);
+	
+	/**
+	 * 
+	 */
+	int deleteStatus(Notice param);
 }

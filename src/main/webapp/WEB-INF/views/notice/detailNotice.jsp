@@ -118,6 +118,7 @@
 			  							<input type="text" id="id" name="id" placeholder="작성자" value=""  maxlength="4">
 			  							<input type="password" id="pwd" name="pwd" placeholder="비밀번호" value=""  maxlength="10">
 			  							<input type="hidden" name="no" id="no" value="${no }"> 
+			  							 <input type="hidden" name="detailNo" id="detailNo" value="${noticeDetail.no }"> 
 		  							</div>
 	  								<textarea class="form-control" id="content" name="content" maxlength="300" rows="3"></textarea>
 	  								<button type="submit" class="btn btn-light" style="float: right;" onclick="checkForm()">등록</button>
@@ -317,9 +318,10 @@ $("#delete").click(function() {
 				case "existComment" :
 					alert("댓글이 존재하는 게시글은 삭제가 불가능합니다.");
 					break;
-				case "existAnswer" :
+					
+				/* case "existAnswer" :
 					alert("답글이 존재하는 게시글은 삭제가 불가능합니다.");
-					break;
+					break; */
 				case "notPwd" :
 					alert("비밀번호가 일치하지 않습니다.");
 					break;

@@ -13,6 +13,6 @@ public class NoticeListDto {
 	private int seq;
 	private int depth;
 	private int no;
-	
+	private int status;
 
 }

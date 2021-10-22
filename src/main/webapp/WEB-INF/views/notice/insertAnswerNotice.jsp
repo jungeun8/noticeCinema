@@ -31,8 +31,8 @@
 		 			<input type="hidden" name="parNo" id="parNo" value="${parNo }"> 
 		 			<input type="hidden" name="seq" id="seq" value="${seq }"> 
 		 			<input type="hidden" name="depth" id="depth" value="${depth }"> 
-		  			<input type="text" class="form-control" id="title" name="title" maxlength="31" autofocus="autofocus">
-		  			<p id="textCount" name="textCount">(0 / 최대 30자)</p>
+		  			<input type="text" class="form-control" id="title" name="title" maxlength="20" autofocus="autofocus">
+		  			<p id="textCount" name="textCount">(0 / 최대 20자)</p>
 				</div>
 				<div class="mb-3">
 				  <label for="exampleFormControlTextarea1" class="form-label">답변 내용</label>
@@ -148,16 +148,16 @@ $("#noitcePwd").keyup(function(e) {
 
  $("#title").keydown(function(e) {
       var content = $(this).val();
-      $("#textCount").text("(" + content.length + "/ 30자)"); //실시간 글자수 카운팅
+      $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅
    }); 
 
 $("#title").keyup(function(e) {
       var content = $(this).val();
-      $("#textCount").text("(" + content.length + "/ 30자)"); //실시간 글자수 카운팅 */ 
-      if (content.length > 30) {
+      $("#textCount").text("(" + content.length + "/ 20자)"); //실시간 글자수 카운팅 */ 
+      if (content.length > 20) {
     	if( !alert("최대 30자까지 입력 가능합니다. (현재 글자수 : "+ content.length+")")){
-    		$(this).val(content.substring(0, 30));
-            $('#textCount').text("(30 / 최대 30자)");
+    		$(this).val(content.substring(0, 20));
+            $('#textCount').text("(20 / 최대 20자)");
     	}
       }else if(content.trim() ==""){
    	   if(content.length==0){
@@ -172,10 +172,10 @@ $("#title").keyup(function(e) {
    
 $("#title").on('blur',function(){
 	var content = $(this).val();
-	if (content.length > 30) {
+	if (content.length > 20) {
     	if( !alert("최대 30자까지 입력 가능합니다. (현재 글자수 : "+ content.length+")")){
-    		$(this).val(content.substring(0, 30));
-            $('#textCount').text("(30 / 최대 30자)");
+    		$(this).val(content.substring(0, 20));
+            $('#textCount').text("(20 / 최대 20자)");
     	}
       }
 });

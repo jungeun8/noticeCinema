@@ -82,16 +82,25 @@ public class NoticeServiceImpl implements NoticeService {
 		// 공지사항 삭제 
 		noticeDao.updateNoticeSeqMinus(no);
 		noticeDao.deleteNotice(no);
+	
 	}
 	
 	@Override
 	public String getdeleteNotice(Notice param) {
 
-		// 댓글이 있는경우 
+//		// 댓글이 있는경우 
 		if(noticeDao.getComentCnt(param.getNo()) > 0 ) return "existComment";
+//		// 답글이 있는경우
+//		if(noticeDao.getAnswerCnt(param) > 0 ) return "existAnswer";
 		
-		// 답글이 있는경우
-		if(noticeDao.getAnswerCnt(param) > 0 ) return "existAnswer";
+		// 답글이 있는 경우 삭제 (삭제 표시)
+		if(noticeDao.getAnswerCnt(param)>0) {
+			param.setStatus(0);
+		}
+		// 답글이 없는 경우 삭제 (완전삭제)
+		else if (noticeDao.getAnswerCnt(param)==0) {
+			param.setStatus(4);
+		}
 		
 		int existNotice = noticeDao.getdeleteNotice(param);
 		if (existNotice > 0) {

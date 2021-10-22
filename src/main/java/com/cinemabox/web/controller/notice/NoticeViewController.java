@@ -85,8 +85,6 @@ public class NoticeViewController {
 		NoticeDetailDto noticeDetail = noticeService.detailNoticeByNo(no);
 		List<NoticeAnswer> list = answerService.getAllAnswer(answer);
 		int pageAllCnt = answerService.getPageAllCnt();
-	System.out.println("list 내용 보이기!!!!======>"+list);
-	
 		model.addAttribute("noticeDetail", noticeDetail);	
 		model.addAttribute("no", no);
 		model.addAttribute("seq", noticeDetail.getSeq());
@@ -115,7 +113,7 @@ public class NoticeViewController {
 		return "redirect:list";
 	}
 	/**
-	 * 답글 삭제 후 메인페이지 호출 
+	 * 답글 삭제 후 세부페이지 호출 
 	 * @param no
 	 * @param redirectAttributes
 	 * @return

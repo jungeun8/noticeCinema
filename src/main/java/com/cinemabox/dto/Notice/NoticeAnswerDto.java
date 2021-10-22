@@ -14,6 +14,6 @@ public class NoticeAnswerDto {
 	private int depth;
 	private int seq;
 	private int no;
-
+	private int status;
 	
 }

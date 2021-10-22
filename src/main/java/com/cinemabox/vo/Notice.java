@@ -21,6 +21,8 @@ public class Notice {
 	private int seq;
 	private int anwserCount;
 	private String parNum;
+	private String parTitle;
+	private int status =1;
     
 
 }

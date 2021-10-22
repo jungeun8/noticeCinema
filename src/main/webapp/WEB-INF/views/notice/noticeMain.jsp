@@ -82,8 +82,15 @@
 										<c:when test="${noticeList.parNum == 0 }"><td class="text-center">${noticeList.parNum = " "}</td></c:when>
 										<c:otherwise><td class="text-center">${noticeList.parNum }</td></c:otherwise >
 										</c:choose> 
-										<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }">
-										<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/>(${noticeList.anwserCount })</pre></a></td>
+											
+										<c:choose><c:when test="${noticeList.status == 0 }">									
+										<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><h6 style="color:blue">삭제된 글입니다</h6></td>
+										</c:when>
+										<c:when test="${noticeList.status == 1 }"><td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }">
+										<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/><c:choose ><c:when test="${noticeList.anwserCount != 0 }">(${noticeList.anwserCount })</c:when>
+										<c:otherwise></c:otherwise></c:choose></pre></a></td></c:when>
+										</c:choose>
+										
 										<td class="text-center"><fmt:formatDate value="${noticeList.creatDate }" pattern="yyyy.MM.dd"/></td>
 										<td class="text-center"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.noticeId }"/></pre></td>
 										<td class="text-end">${noticeList.hits }</td>
