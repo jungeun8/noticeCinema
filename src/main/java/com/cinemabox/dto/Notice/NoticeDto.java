@@ -10,6 +10,6 @@ public class NoticeDto {
 	private String division = "전체";
 	private String noticeId;
 	private String noitcePwd;
-	private int status;
+	private int status=1;
 	
 }

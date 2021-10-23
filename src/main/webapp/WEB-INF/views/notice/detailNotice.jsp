@@ -56,6 +56,10 @@
 						</tr>
 					</thead>
 					<tbody>
+					<tr class="content">
+						<td>파일첨부</td>
+						<td colspan="2">${fileList.filename }</td>
+					</tr>
 						<tr class="content">
 							<%-- <td colspan="3" style="padding:35px;"><xmp>${noticeDetail.content }</xmp></td>	 --%>
 							<td colspan="3" style="padding:35px;"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeDetail.content}"/></pre></td>

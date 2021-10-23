@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cinemabox.dao.Notice.FileItemDao">
+
+	<select id="getAllFiles" parameterType="int" resultType="com.cinemabox.vo.FileItem">
+        select
+			file_no no,
+			file_filename filename,
+			file_filetype filetype,
+			file_filesize filesize,
+			file_noticeno fileNoticeNo
+		from
+			cinemabox_file
+		where
+			file_noticeno = #{fileNoticeNo}
+		order by
+			file_item_no desc
+	</select>
+
+	<insert id="insertFile" parameterType="com.cinemabox.vo.FileItem">
+		insert into cinemabox_file
+		(file_no, file_filename, file_filetype, file_filesize, file_noticeno)
+		values
+		(file_seq.nextval, #{filename},  #{filetype}, #{filesize},  #{fileNoticeNo})
+	</insert>
+	
+	
+	<update id="updateFile" parameterType="com.cinemabox.vo.FileItem">
+		update
+			cinemabox_file 
+		set
+			file_filename = #{filename},
+			file_filetype = #{filetype},
+			file_filesize = #{filesize}
+		where
+			file_noticeno = #{fileNoticeNo}
+	</update>
+	
+	<delete id="deleteFile" parameterType="int">
+		delete from
+			cinemabox_file
+		where
+			file_noticeno = #{fileNoticeNo}
+	</delete>
+	
+
+</mapper>

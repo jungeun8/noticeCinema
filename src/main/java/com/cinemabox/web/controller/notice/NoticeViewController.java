@@ -1,5 +1,10 @@
 package com.cinemabox.web.controller.notice;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,21 +12,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cinemabox.dto.Notice.AnswerDto;
+import com.cinemabox.dto.Notice.FileDto;
 import com.cinemabox.dto.Notice.NoticeAnswerDto;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
 import com.cinemabox.dto.Notice.ParNoticeDto;
 import com.cinemabox.dto.Question.QuestionDto;
+import com.cinemabox.service.theater.Notice.FileService;
 import com.cinemabox.service.theater.Notice.NoticeAnswerService;
 import com.cinemabox.service.theater.Notice.NoticeService;
+import com.cinemabox.vo.FileItem;
 import com.cinemabox.vo.Notice;
 import com.cinemabox.vo.NoticeAnswer;
 
@@ -36,6 +46,8 @@ public class NoticeViewController {
 	NoticeService noticeService;
 	@Autowired
 	NoticeAnswerService answerService;
+	@Autowired
+	FileService fileService;
 
 	/**
 	 * 공지사항리스트를 조회하여 공지사항 페이지를 호출
@@ -85,6 +97,9 @@ public class NoticeViewController {
 		NoticeDetailDto noticeDetail = noticeService.detailNoticeByNo(no);
 		List<NoticeAnswer> list = answerService.getAllAnswer(answer);
 		int pageAllCnt = answerService.getPageAllCnt();
+		//  파일 업로드 조회
+		model.addAttribute("fileList", fileService.getAllFiles(no));
+		// 공지 세부사항
 		model.addAttribute("noticeDetail", noticeDetail);	
 		model.addAttribute("no", no);
 		model.addAttribute("seq", noticeDetail.getSeq());
@@ -143,10 +158,58 @@ public class NoticeViewController {
 	 * @return
 	 */
 	@RequestMapping("/insert")
-	public String insertNotice(NoticeDto notice, RedirectAttributes redirectAttributes) {
+	public String insertNotice(NoticeDto notice, FileItem file, RedirectAttributes redirectAttributes) {
 		System.out.println("notice ==>"+notice.toString());
 		notice.setImportant("true".equals(notice.getImportant())?"1":"0");
 		noticeService.addNotice(notice);
+		
+		// 모든 첨부파일객체를 조회하기
+				List<MultipartFile> uploadFiles = file.getUpfiles();
+				
+				// 데이터베이스에 저장할 파일아이템(FileItem)객첼 저장하는 ArrayList객체를 생성한다.
+				List<FileItem> fileItems = new ArrayList<>();
+				FileDto fileAdd = new FileDto();
+				// List에 저장된 MultipartFile를 하나씩 순회처리한다.
+				for (MultipartFile uploadFile : uploadFiles) {
+					
+					// MultipartFile객체에 첨부파일 정보가 포함되어 있는지 체크한다.
+					if (!uploadFile.isEmpty()) {
+						// 첨부파일의 이름을 조회하고, 중복을 방지하기 위해서 유닉스타임을 파일이름에 붙인다.
+						String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
+						// 첨부파일의 컨텐츠 타입을 조회한다.
+						String filetype = uploadFile.getContentType();
+						// 첨부파일의 사이즈를 조회한다.
+						long filesize = uploadFile.getSize();
+						
+						// FileItem객체를 생성해서 첨부파일 정보를 저장한다.
+						FileItem fileItem = new FileItem();
+						fileItem.setFilename(filename);
+						fileItem.setFiletype(filetype);
+						fileItem.setFilesize(filesize);
+						
+						// 위에서 생성한 ArrayList객체에 FileItem객체를 저장한다.
+						fileItems.add(fileItem);
+						
+						// 파일복사 유틸리티 클래스이 copy() 메소드를 이용해서
+						// 임시파일폴더에 저장된 첨부파일을 읽어오는 스트림과 지정된 파일폴더로 출력하는 스트림을 지정하면 첨부파일을 원하는 폴더에 저장할 수 있다.
+						try {
+							FileCopyUtils.copy(uploadFile.getInputStream(), new FileOutputStream(new File("c:/upload", filename)));
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				// FileDto 객체에 첨부파일 갯수를 저장한다.
+				fileAdd.setAmount(fileItems.size());
+				// FileDto 객체에 FileItem객체가 여러거 저장된 List객체를 저장한다.
+				fileAdd.setFileItems(fileItems);
+				// 파일첨부 등록 
+				fileService.insertFile(file);
+				
 		return "redirect:list";
 	}
 	

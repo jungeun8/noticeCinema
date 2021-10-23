@@ -36,6 +36,23 @@
 				  <textarea class="form-control" id="content" name ="content" rows="3" maxlength="1000" autofocus="autofocus"></textarea>
 				  <p id="textCount1" name="textCount1">(0 / 최대 1000자)</p>
 				</div>
+				<div class="mb-5">
+				<h6>첨부파일 등록</h6>
+				<form id="form-register" method="post" action="register" enctype="multipart/form-data">
+					<div class="input-group mb-3">
+					  <input type="file" class="form-control" id="upfiles" name="upfiles">
+					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+					</div>
+					<div class="input-group mb-3">
+					  <input type="file" class="form-control" id="upfiles" name="upfiles">
+					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+					</div>
+					<div class="input-group mb-3">
+					  <input type="file" class="form-control" id="upfiles" name="upfiles">
+					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+					</div>
+				</div>
+				</form>
 				<h5 class="mb-3">고객정보(필수입력사항입니다)</h5>
 				          <div class="row g-5" style="background: #f5f5f5;">
 				            <div class="col-sm-6">
@@ -59,7 +76,8 @@
 		</form>
 	<%@ include file="../common/footer.jsp"%>	
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type="text/javascript">
 $(function() {
 	// 입력값 유효성 체크해서 전부 값이 입력되어 있을 때만 폼 입력값이 서버로 제출되게 하기

@@ -1,6 +1,9 @@
 package com.cinemabox.vo;
 
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 
@@ -23,6 +26,6 @@ public class Notice {
 	private String parNum;
 	private String parTitle;
 	private int status =1;
-    
+	private List<MultipartFile> fileItems;
 
 }

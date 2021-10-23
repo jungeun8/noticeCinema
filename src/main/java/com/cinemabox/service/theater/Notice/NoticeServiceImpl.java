@@ -31,6 +31,12 @@ public class NoticeServiceImpl implements NoticeService {
 		for(int i=0; i<notice.size(); i++) {
 			if(notice.get(i).getDepth()>0) {
 				Notice item = notice.get(i); // 게시글 
+				// 삭제 상태값에 따라서 제목 다르게 보이기 
+//				if(searchData.getStatus() == 1) {
+//					item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
+//				}else if(searchData.getStatus() == 0) {
+//					item.setTitle("   ".repeat(item.getDepth())+"▶︎RE: 삭제된 글입니다.");
+//				}
 				item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
 				notice.set(i, item);
 				System.out.println("item의 결과===>"+ item.getParNum());
@@ -82,6 +88,7 @@ public class NoticeServiceImpl implements NoticeService {
 		// 공지사항 삭제 
 		noticeDao.updateNoticeSeqMinus(no);
 		noticeDao.deleteNotice(no);
+		
 	
 	}
 	
@@ -101,13 +108,16 @@ public class NoticeServiceImpl implements NoticeService {
 		else if (noticeDao.getAnswerCnt(param)==0) {
 			param.setStatus(4);
 		}
-		
-		int existNotice = noticeDao.getdeleteNotice(param);
-		if (existNotice > 0) {
-			return "success";
-		}else return "notPwd";  // 비밀번호가 틀린경우
-		
-	}
+			int existNotice = noticeDao.getdeleteNotice(param);
+			if (existNotice > 0) {
+				if (noticeDao.getAnswerCnt(param)==0) {
+					param.setStatus(4);
+				}
+				return "success";
+			}return "notPwd";// 비밀번호가 틀린경우
+		}
+		 
+	
 	@Override
 	public void increaseHit(int no) {
 		// 조회수 증가 
