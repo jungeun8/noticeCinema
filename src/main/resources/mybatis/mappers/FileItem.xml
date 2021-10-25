@@ -15,8 +15,22 @@
 			cinemabox_file
 		where
 			file_noticeno = #{fileNoticeNo}
-		order by
-			file_item_no desc
+		
+	</select>
+	
+	
+	<select id="getFilesNo" parameterType="int" resultType="com.cinemabox.vo.FileItem">
+        select
+			file_no no,
+			file_filename filename,
+			file_filetype filetype,
+			file_filesize filesize,
+			file_noticeno fileNoticeNo
+		from
+			cinemabox_file
+		where
+			file_no = #{no}
+		
 	</select>
 
 	<insert id="insertFile" parameterType="com.cinemabox.vo.FileItem">
@@ -42,7 +56,7 @@
 		delete from
 			cinemabox_file
 		where
-			file_noticeno = #{fileNoticeNo}
+			file_no = #{no}
 	</delete>
 	
 

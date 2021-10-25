@@ -27,5 +27,7 @@ public class Notice {
 	private String parTitle;
 	private int status =1;
 	private List<MultipartFile> fileItems;
+	private int getFileAllCnt;
+	private int searchCnt;
 
 }

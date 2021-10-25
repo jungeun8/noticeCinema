@@ -54,6 +54,9 @@
 		     				 <input class="form-control me-2 " type="search" id="searchWord" name="searchWord" value="${searchWord }" placeholder="제목을 검색해주세요" aria-label="Search">
 		     				 <button class="btn btn-outline-dark" style="width: 100px;" onclick="serch_click()">검색</button>
 		    			</form>
+		    			<c:forEach var="noticeList" items="${noticeList }">
+		    			<div>(총: ${noticeList.searchCnt }개)</div>
+		    			</c:forEach>
 		  			</div>
 				</nav>
 					<div class=" mb-3">
@@ -79,17 +82,30 @@
 									<tr>
 										<input type="hidden" name=noticeNo id="noticeNo" value="${noticeList.no }"/>
 										<c:choose >
-										<c:when test="${noticeList.parNum == 0 }"><td class="text-center">${noticeList.parNum = " "}</td></c:when>
-										<c:otherwise><td class="text-center">${noticeList.parNum }</td></c:otherwise >
-										</c:choose> 
-											
-										<c:choose><c:when test="${noticeList.status == 0 }">									
-										<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><h6 style="color:blue">삭제된 글입니다</h6></td>
-										</c:when>
-										<c:when test="${noticeList.status == 1 }"><td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }">
-										<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/><c:choose ><c:when test="${noticeList.anwserCount != 0 }">(${noticeList.anwserCount })</c:when>
-										<c:otherwise></c:otherwise></c:choose></pre></a></td></c:when>
-										</c:choose>
+											<c:when test="${noticeList.parNum == 0 }"><td class="text-center">${noticeList.parNum = " "}</td></c:when>
+											<c:otherwise><td class="text-center">${noticeList.parNum }</td></c:otherwise >
+											</c:choose> 											
+												<c:choose>
+													<c:when test="${noticeList.status == 0 }">									
+														<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; ">
+														<pre style="margin:0px; overflow: auto; white-space: pre-wrap; color:blue"><c:out value="${noticeList.title }"/>
+														<c:choose >
+														<c:when test="${noticeList.getFileAllCnt > 0 }">
+														<img src="../resources/images/notice/파일다운.png" width="17px"height="17px">
+														</c:when>
+														</c:choose></pre></td>
+													</c:when>
+													
+													<c:when test="${noticeList.status == 1 }"><td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }">
+													<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/>
+														<c:choose >
+														<c:when test="${noticeList.getFileAllCnt> 0 }">
+														<img src="../resources/images/notice/파일다운.png" width="17px"height="17px">
+														</c:when>
+														</c:choose>
+													<c:choose ><c:when test="${noticeList.anwserCount != 0 }">(${noticeList.anwserCount })</c:when>
+													<c:otherwise></c:otherwise></c:choose></pre></a></td></c:when>
+											</c:choose>
 										
 										<td class="text-center"><fmt:formatDate value="${noticeList.creatDate }" pattern="yyyy.MM.dd"/></td>
 										<td class="text-center"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.noticeId }"/></pre></td>
@@ -151,6 +167,7 @@
 </div>
 <script type="text/javascript">
 $(function() {
+	debugger;
 	$("#search").submit(function() {
 	var searchWord = $("#searchWord").val();
 		if(searchWord.trim() == ""){

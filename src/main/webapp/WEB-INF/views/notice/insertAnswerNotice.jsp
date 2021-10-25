@@ -24,7 +24,7 @@
 		<div class="top" style="margin-left:150px;  margin-top:50px;">
 			<h3 >공지사항</h3>
 		</div>
-		<form id="notice-form" name="insertForm" method="post" action="../notice/insertAnswer">
+		<form id="notice-form" name="insertForm" method="post" action="../notice/insertAnswer" enctype="multipart/form-data">
 			<div style="padding:80px">
 				<div class="mb-3">
 		 			<label for="exampleFormControlInput1" class="form-label">답변 제목</label>
@@ -38,6 +38,22 @@
 				  <label for="exampleFormControlTextarea1" class="form-label">답변 내용</label>
 				  <textarea class="form-control" id="content" name ="content" rows="3" maxlength="1000" autofocus="autofocus"></textarea>
 				  <p id="textCount1" name="textCount1">(0 / 최대 1000자)</p>
+				</div>
+				<div class="mb-5">
+				<h6>첨부파일 등록</h6>
+				
+					<div class="input-group mb-3">
+					  <input type="file" class="form-control" id="upfiles" name="upfiles">
+					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+					</div>
+					<div class="input-group mb-3">
+					  <input type="file" class="form-control" id="upfiles" name="upfiles">
+					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+					</div>
+					<div class="input-group mb-3">
+					  <input type="file" class="form-control" id="upfiles" name="upfiles">
+					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+					</div>
 				</div>
 				<h5 class="mb-3">고객정보(필수입력사항입니다)</h5>
 				          <div class="row g-5" style="background: #f5f5f5;">

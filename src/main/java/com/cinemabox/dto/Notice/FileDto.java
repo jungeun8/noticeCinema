@@ -18,5 +18,5 @@ public class FileDto {
 	private int fileNoticeNo;
 	private int amount;
 	private List<MultipartFile> upfiles;
-	List<FileItem> fileItems;
+	private List<FileItem> fileItems;
 }

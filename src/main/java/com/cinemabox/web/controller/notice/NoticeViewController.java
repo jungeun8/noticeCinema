@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cinemabox.dto.Notice.AnswerDto;
@@ -37,6 +38,7 @@ import com.cinemabox.vo.NoticeAnswer;
 
 
 
+
 @Controller
 @RequestMapping("/notice")
 public class NoticeViewController {
@@ -48,6 +50,8 @@ public class NoticeViewController {
 	NoticeAnswerService answerService;
 	@Autowired
 	FileService fileService;
+	@Autowired
+	DownloadView downloadView;
 
 	/**
 	 * 공지사항리스트를 조회하여 공지사항 페이지를 호출
@@ -76,7 +80,7 @@ public class NoticeViewController {
 		model.addAttribute("seq", searchData.getSeq());
 		model.addAttribute("parNo", searchData.getParNo());
 		model.addAttribute("depth", searchData.getDepth());
-//		model.addAttribute("countComent", countComent);
+		model.addAttribute("fileList", fileService.getAllFiles(searchData.getNo()));
 		// 뷰페이지로 내부이동하기
 		// /WEB-INF/views/notice/noticeMain.jsp로 내부이동해서 JSP 실행시키기
 		return "notice/noticeMain";
@@ -97,7 +101,9 @@ public class NoticeViewController {
 		NoticeDetailDto noticeDetail = noticeService.detailNoticeByNo(no);
 		List<NoticeAnswer> list = answerService.getAllAnswer(answer);
 		int pageAllCnt = answerService.getPageAllCnt();
-		//  파일 업로드 조회
+//		//  파일 업로드 조회 filename.substring(13);
+//		FileItem fileItem = new FileItem();
+//		model.addAttribute("originalFilename", fileItem.getOriginalFilname());
 		model.addAttribute("fileList", fileService.getAllFiles(no));
 		// 공지 세부사항
 		model.addAttribute("noticeDetail", noticeDetail);	
@@ -158,13 +164,13 @@ public class NoticeViewController {
 	 * @return
 	 */
 	@RequestMapping("/insert")
-	public String insertNotice(NoticeDto notice, FileItem file, RedirectAttributes redirectAttributes) {
+	public String insertNotice(NoticeDto notice, RedirectAttributes redirectAttributes) {
 		System.out.println("notice ==>"+notice.toString());
 		notice.setImportant("true".equals(notice.getImportant())?"1":"0");
-		noticeService.addNotice(notice);
-		
+		int noticeNo = noticeService.addNotice(notice);
+		System.out.println("noticeNo : " + noticeNo);
 		// 모든 첨부파일객체를 조회하기
-				List<MultipartFile> uploadFiles = file.getUpfiles();
+				List<MultipartFile> uploadFiles = notice.getUpfiles();
 				
 				// 데이터베이스에 저장할 파일아이템(FileItem)객첼 저장하는 ArrayList객체를 생성한다.
 				List<FileItem> fileItems = new ArrayList<>();
@@ -175,7 +181,8 @@ public class NoticeViewController {
 					// MultipartFile객체에 첨부파일 정보가 포함되어 있는지 체크한다.
 					if (!uploadFile.isEmpty()) {
 						// 첨부파일의 이름을 조회하고, 중복을 방지하기 위해서 유닉스타임을 파일이름에 붙인다.
-						String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
+//						String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
+						String filename = uploadFile.getOriginalFilename();
 						// 첨부파일의 컨텐츠 타입을 조회한다.
 						String filetype = uploadFile.getContentType();
 						// 첨부파일의 사이즈를 조회한다.
@@ -186,14 +193,15 @@ public class NoticeViewController {
 						fileItem.setFilename(filename);
 						fileItem.setFiletype(filetype);
 						fileItem.setFilesize(filesize);
-						
+						fileItem.setFileNoticeNo(noticeNo);
 						// 위에서 생성한 ArrayList객체에 FileItem객체를 저장한다.
+						
 						fileItems.add(fileItem);
 						
 						// 파일복사 유틸리티 클래스이 copy() 메소드를 이용해서
 						// 임시파일폴더에 저장된 첨부파일을 읽어오는 스트림과 지정된 파일폴더로 출력하는 스트림을 지정하면 첨부파일을 원하는 폴더에 저장할 수 있다.
 						try {
-							FileCopyUtils.copy(uploadFile.getInputStream(), new FileOutputStream(new File("c:/upload", filename)));
+							FileCopyUtils.copy(uploadFile.getInputStream(), new FileOutputStream(new File("/Users/jungeun-kim/fileFolder", filename)));
 						} catch (FileNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -201,14 +209,10 @@ public class NoticeViewController {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						
+						fileService.insertFile(fileItem);
 					}
 				}
-				// FileDto 객체에 첨부파일 갯수를 저장한다.
-				fileAdd.setAmount(fileItems.size());
-				// FileDto 객체에 FileItem객체가 여러거 저장된 List객체를 저장한다.
-				fileAdd.setFileItems(fileItems);
-				// 파일첨부 등록 
-				fileService.insertFile(file);
 				
 		return "redirect:list";
 	}
@@ -221,8 +225,53 @@ public class NoticeViewController {
 	 */
 	@RequestMapping("/insertAnswer")
 	public String insertAnswerNotice(NoticeAnswerDto notice, RedirectAttributes redirectAttributes) {
-		noticeService.addNoticeAnswer(notice);
+		int noticeNo= noticeService.addNoticeAnswer(notice);
 		System.out.println("답변parNo: ===>" + notice );
+	
+		// 모든 첨부파일객체를 조회하기
+				List<MultipartFile> uploadFiles = notice.getUpfiles();
+				
+				// 데이터베이스에 저장할 파일아이템(FileItem)객첼 저장하는 ArrayList객체를 생성한다.
+				List<FileItem> fileItems = new ArrayList<>();
+				FileDto fileAdd = new FileDto();
+				// List에 저장된 MultipartFile를 하나씩 순회처리한다.
+				for (MultipartFile uploadFile : uploadFiles) {
+					
+					// MultipartFile객체에 첨부파일 정보가 포함되어 있는지 체크한다.
+					if (!uploadFile.isEmpty()) {
+						// 첨부파일의 이름을 조회하고, 중복을 방지하기 위해서 유닉스타임을 파일이름에 붙인다.
+//						String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
+						String filename = uploadFile.getOriginalFilename();
+						// 첨부파일의 컨텐츠 타입을 조회한다.
+						String filetype = uploadFile.getContentType();
+						// 첨부파일의 사이즈를 조회한다.
+						long filesize = uploadFile.getSize();
+						
+						// FileItem객체를 생성해서 첨부파일 정보를 저장한다.
+						FileItem fileItem = new FileItem();
+						fileItem.setFilename(filename);
+						fileItem.setFiletype(filetype);
+						fileItem.setFilesize(filesize);
+						fileItem.setFileNoticeNo(noticeNo);
+						// 위에서 생성한 ArrayList객체에 FileItem객체를 저장한다.
+						
+						fileItems.add(fileItem);
+						
+						// 파일복사 유틸리티 클래스이 copy() 메소드를 이용해서
+						// 임시파일폴더에 저장된 첨부파일을 읽어오는 스트림과 지정된 파일폴더로 출력하는 스트림을 지정하면 첨부파일을 원하는 폴더에 저장할 수 있다.
+						try {
+							FileCopyUtils.copy(uploadFile.getInputStream(), new FileOutputStream(new File("/Users/jungeun-kim/fileFolder", filename)));
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						fileService.insertFile(fileItem);
+					}
+				}
 		return "redirect:list";
 	}
 	
@@ -264,6 +313,7 @@ public class NoticeViewController {
 	public String modifyNotice(Notice list, Model model) throws Exception{
 		Notice noticeDetail = noticeService.getModifyNotice(list);
 		model.addAttribute("noticeDetail", noticeDetail);
+		model.addAttribute("fileList", fileService.getAllFiles(list.getNo()));
 		return "notice/modifyNotice";
 	}
 	
@@ -274,11 +324,13 @@ public class NoticeViewController {
 	 * @return
 	 */
 	@RequestMapping("/newModify")
-	public String newNotice(NoticeDetailDto notice,  RedirectAttributes redirectAttributes) {
+	public String newNotice(NoticeDetailDto notice, FileItem item,  RedirectAttributes redirectAttributes) {
 		noticeService.changeNotice(notice);
+//		fileService.updateFile(item);
 		redirectAttributes.addAttribute("no", notice.getNo());
 		return "redirect:list";
 	}
+	
 	
 	/**
 	 * 글 수정 전 작성자, 비밀번호 입력
@@ -314,6 +366,17 @@ public class NoticeViewController {
 	public @ResponseBody ResponseEntity<String> deleteList(Notice delete) {
 		String resultMessage = noticeService.getdeleteNotice(delete); 
 		return new ResponseEntity<String>( resultMessage, HttpStatus.OK);
+	}
+	
+	/**
+	 * 파일 삭제
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/fileDelet")
+	public @ResponseBody ResponseEntity<String> deleteFile(int fileNo) {
+		fileService.deleteFile(fileNo);
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 	
 	/**
@@ -358,5 +421,23 @@ public class NoticeViewController {
 		}
 		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
 	}
+	
+	
+	@GetMapping("/download")
+	public ModelAndView download(@RequestParam("no") int itemNo) {
+		ModelAndView mav = new ModelAndView();
+		FileItem fileItem = fileService.getFilesNo(itemNo);
+		
+		// ModelAndView의 Model에 디렉토리경로와 파일명을 저장한다.
+		mav.addObject("directory", "/Users/jungeun-kim/fileDownFolder");
+		mav.addObject("filename", fileItem.getFilename());
+		// 파일에 유닉스 타입없애기
+//		mav.addObject("originalFilename", fileItem.getOriginalFilname());
+		// 파일을 다은로드하는View객체를 ModelAndView 저장한다.
+		mav.setView(downloadView);		
+		
+		return mav;
+	}
+	
 	
 }

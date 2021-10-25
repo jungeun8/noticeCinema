@@ -55,6 +55,23 @@
 								</div>
 				           </div>
 						</div>
+					<h6>첨부파일 수정</h6>
+					<div class="input-group mb-3">
+						<c:forEach var="fileList" items="${fileList }">
+							<ul class="list-group" style="list-style: none;">	
+							<input type="hidden" name="fileNo" id="fileNo" value="${fileList.no }">  
+							<li>
+							${fileList.filename }<a style="margin:10px;" class="btn btn-warning btn-sm" id="delete" onclick="">삭제</a>
+							</li>
+							</ul>
+						</c:forEach>
+					  </div><!-- 
+					  <h6>첨부파일 추가</h6>
+						<div class="input-group mb-3">
+						  <input type="file" class="form-control" id="upfiles" name="upfiles">
+						  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+						</div> -->
+				</div>
 				<div style="text-align: right;">
 	                <input type=submit value="수정" onclick="checkForm()"/>
 	                <input type=button value="목록" onclick="location.href='list'"/>
@@ -71,6 +88,35 @@
 	$('#content').val(content99.value);
 
 } */
+
+//파일 삭제 버튼을 클릭했을 때 실행된다.
+$("#delete").click(function() {
+	var chk = confirm("정말 삭제하시겠습니까?");
+	var fileNo = $("#fileNo").val();
+	if (chk) {
+		debugger
+	$.ajax({
+		type: "POST",
+		url: "/cinemabox/notice/fileDelet",
+		data: {fileNo: $("#fileNo").val()},
+		error : function(error) {
+	        alert("error");
+	    },
+		success : function(){
+			alert("삭제되었습니다");
+			
+		},
+		
+	    complete : function() {
+	      /*   alert("삭제되었습니다."); 
+	        location.href='delete?no='+no; */
+		    }
+		});
+	}
+})
+
+
+
 $(function() {
 	$("#notice-form").submit(function() {
 		

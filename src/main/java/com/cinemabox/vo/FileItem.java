@@ -10,12 +10,16 @@ import lombok.Data;
 
 @Data
 public class FileItem {
-	private long no;
+	private int no;
 	private String filename;
 	private String filetype;
 	private long filesize;
 	private int fileNoticeNo;
 	private List<MultipartFile> upfiles;
+	
+	public String getOriginalFilname() {
+		return filename.substring(13);
+	}
 
 
 }

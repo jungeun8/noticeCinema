@@ -1,5 +1,9 @@
 package com.cinemabox.dto.Notice;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 @Data
@@ -15,5 +19,6 @@ public class NoticeAnswerDto {
 	private int seq;
 	private int no;
 	private int status=1;
+	private List<MultipartFile> upfiles;
 	
 }

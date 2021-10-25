@@ -29,18 +29,28 @@ public class NoticeServiceImpl implements NoticeService {
 		// 공지사항 조회 
 		List<Notice> notice = noticeDao.getNoticeAll(searchData);
 		for(int i=0; i<notice.size(); i++) {
+			Notice item = notice.get(i); // 게시글 
 			if(notice.get(i).getDepth()>0) {
-				Notice item = notice.get(i); // 게시글 
+				
+				System.out.println("게시글["+i+"] :" + item.toString());
 				// 삭제 상태값에 따라서 제목 다르게 보이기 
-//				if(searchData.getStatus() == 1) {
-//					item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
-//				}else if(searchData.getStatus() == 0) {
-//					item.setTitle("   ".repeat(item.getDepth())+"▶︎RE: 삭제된 글입니다.");
-//				}
-				item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
+				if(item.getStatus() == 1) {
+					item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
+				}else if(item.getStatus() == 0) {
+					item.setTitle("   ".repeat(item.getDepth())+"▶︎RE: 삭제된 글입니다.");
+					System.out.println("title : " + item.getTitle());
+				}
+				//item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
 				notice.set(i, item);
 				System.out.println("item의 결과===>"+ item.getParNum());
+			}else {
+				System.out.println("게시글["+i+"] :" + item.toString());
+				if(item.getStatus() == 0) {
+					item.setTitle("삭제된 글입니다.");
+					notice.set(i, item);
+				}
 			}
+			
 		}
 		
 		// 공지사항을 반환한다.
@@ -62,15 +72,16 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 	
 	@Override
-	public void addNotice(NoticeDto addNotice) {
+	public int addNotice(NoticeDto addNotice) {
 		// 공지 등록 
-		 noticeDao.insertNotice(addNotice);
+		noticeDao.insertNotice(addNotice);
+		return addNotice.getNo();
 	}
 	
 
 	@Override
 	@Transactional
-	public void addNoticeAnswer(NoticeAnswerDto notice) {
+	public int addNoticeAnswer(NoticeAnswerDto notice) {
 		// 공지 답글 등록
 		NoticeSeqDto noticeSeqParam = new NoticeSeqDto();
 		notice.setSeq(notice.getSeq()+1);
@@ -80,6 +91,7 @@ public class NoticeServiceImpl implements NoticeService {
 		noticeDao.insertNoticeAnswer(notice);
 //		int newSeq = notice.getSeq();
 //		newSeq += newSeq;
+		return notice.getNo();
 		
 	};
 	
@@ -89,7 +101,6 @@ public class NoticeServiceImpl implements NoticeService {
 		noticeDao.updateNoticeSeqMinus(no);
 		noticeDao.deleteNotice(no);
 		
-	
 	}
 	
 	@Override
@@ -99,19 +110,21 @@ public class NoticeServiceImpl implements NoticeService {
 		if(noticeDao.getComentCnt(param.getNo()) > 0 ) return "existComment";
 //		// 답글이 있는경우
 //		if(noticeDao.getAnswerCnt(param) > 0 ) return "existAnswer";
-		
+		boolean existAnswer = false;
 		// 답글이 있는 경우 삭제 (삭제 표시)
 		if(noticeDao.getAnswerCnt(param)>0) {
 			param.setStatus(0);
+			existAnswer = true;
 		}
-		// 답글이 없는 경우 삭제 (완전삭제)
+		// 답글이 없는 경우 삭제 (완전삭제) 사실상 필요없음 왜냐하면 실제로 디비에서 나중에 지우기 때문
 		else if (noticeDao.getAnswerCnt(param)==0) {
 			param.setStatus(4);
 		}
 			int existNotice = noticeDao.getdeleteNotice(param);
 			if (existNotice > 0) {
-				if (noticeDao.getAnswerCnt(param)==0) {
-					param.setStatus(4);
+				if(existAnswer) {
+					noticeDao.deleteStatus(param);
+					return "existAnswer";
 				}
 				return "success";
 			}return "notPwd";// 비밀번호가 틀린경우

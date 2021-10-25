@@ -20,11 +20,11 @@ public interface NoticeService {
 	// 공지사항 삭제 
 	void increaseHit(int no);
 	// 조회수 증가 
-	void addNotice(NoticeDto notice);
+	int addNotice(NoticeDto notice);
 	// 공지 등록 
 	void changeNotice(NoticeDetailDto notice);
 	// 공지사항 수정 
-	void addNoticeAnswer(NoticeAnswerDto notice);
+	int addNoticeAnswer(NoticeAnswerDto notice);
 	// 공지 답글 등록
 	List<Notice> noticeMain();
 	// 고객센터 메인페이지에 공지사항 추가

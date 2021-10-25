@@ -43,11 +43,11 @@
 			</div>
 			<div class="col-9">
 				<table class="table mb-3" style="margin:auto">
-					<colgroup>
+					 <colgroup>
 						<col width="*">
 						<col width="25%">
 						<col width="15%">
-					</colgroup>
+					</colgroup> 
 					<thead style="background: #fbe5a5;">
 						<tr>
 							<th><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeDetail.title }"/></pre></th>
@@ -56,10 +56,22 @@
 						</tr>
 					</thead>
 					<tbody>
-					<tr class="content">
-						<td>파일첨부</td>
-						<td colspan="2">${fileList.filename }</td>
-					</tr>
+						<tr class="content">
+						  <td colspan="3">
+							<ul class="list-group" style="list-style: none;">	
+							<li>
+							파일첨부
+							</li>
+							</ul>
+							<c:forEach var="fileList" items="${fileList }">
+							<ul class="list-group" style="list-style: none;">	
+							<li>
+							${fileList.filename }<a style="margin:10px;" class="btn btn-warning btn-sm" href="download?no=${fileList.no }">다운로드</a>
+							</li>
+							</ul>
+							</c:forEach>
+							</td>
+						</tr>
 						<tr class="content">
 							<%-- <td colspan="3" style="padding:35px;"><xmp>${noticeDetail.content }</xmp></td>	 --%>
 							<td colspan="3" style="padding:35px;"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeDetail.content}"/></pre></td>
@@ -322,14 +334,14 @@ $("#delete").click(function() {
 				case "existComment" :
 					alert("댓글이 존재하는 게시글은 삭제가 불가능합니다.");
 					break;
-					
-				/* case "existAnswer" :
-					alert("답글이 존재하는 게시글은 삭제가 불가능합니다.");
-					break; */
+				case "existAnswer" :
+					alert("삭제 되었습니다.");
+					location.href = "list";
+					break;
 				case "notPwd" :
 					alert("비밀번호가 일치하지 않습니다.");
 					break;
-				case "success" :
+				case "success" : // 완전삭제
 					location.href='delete?no='+$("#deleteNo").val();
 					alert("삭제 되었습니다.");
 					break;

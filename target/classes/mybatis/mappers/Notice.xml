@@ -20,7 +20,9 @@
             A.status,
             (select count(*) from cinemabox_answer where answer_noticeNo = A.no) as anwserCount,
             NVL(B.parNum ,0) as parNum,
-            C.notice_title as parTitle
+            C.notice_title as parTitle,
+            (select count(*) from cinemabox_file where file_noticeno = A.no) as getFileAllCnt,
+            (select count(*) from cinemabox_notice where notice_title like '%${searchWord}%' ) as searchCnt
         from (
                 select 
                     notice_no				no,
@@ -53,7 +55,7 @@
                 from cinemabox_notice 
             ) C
              on (A.parNo = C.notice_no)
-		where numno between ${startPage} and ${endPage} and status != 4
+		where numno between ${startPage} and ${endPage}
 	</select>
 	
 	
@@ -146,6 +148,9 @@
 	</select>
 
 	<insert id="insertNotice" parameterType="com.cinemabox.dto.Notice.NoticeDto">
+		<selectKey keyProperty="no" resultType="int" order="AFTER">
+			select notice_seq.currval from dual
+		</selectKey>
 		insert into cinemabox_notice
 		(notice_no, notice_division, notice_title, notice_content, notice_date, notice_id, notice_pwd, notice_par_no, notice_status)
 		values
@@ -153,6 +158,9 @@
 	</insert>
 	
 	<insert id="insertNoticeAnswer" parameterType="com.cinemabox.dto.Notice.NoticeAnswerDto">
+		<selectKey keyProperty="no" resultType="int" order="AFTER">
+			select notice_seq.currval from dual
+		</selectKey>
 		insert into cinemabox_notice
 		(notice_no, notice_title, notice_content, notice_date, notice_id, notice_pwd, notice_par_no, notice_depth, notice_seq_no, notice_status)
 		values
