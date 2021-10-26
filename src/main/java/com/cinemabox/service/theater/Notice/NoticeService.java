@@ -41,7 +41,9 @@ public interface NoticeService {
 
 	List<Notice> getNoticeNo(NoticeListDto parName);
 	// 원글에만 번호 
-	
+
+	List<Notice> getNoticeAllExcel(NoticeListDto searchData);
+	// 엑셀다운로드를 위한 데이터 조회
 	
 
 	

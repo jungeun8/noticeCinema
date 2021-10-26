@@ -175,6 +175,40 @@ public class NoticeServiceImpl implements NoticeService {
 		
 		return noticeDao.getComentCnt(no);
 	}
+	
+	
+	@Override
+	public List<Notice> getNoticeAllExcel(NoticeListDto searchData) {
+		// 공지사항 조회 
+				List<Notice> notice = noticeDao.getNoticeAllExcel(searchData);
+				for(int i=0; i<notice.size(); i++) {
+					Notice item = notice.get(i); // 게시글 
+					if(notice.get(i).getDepth()>0) {
+						
+						System.out.println("게시글["+i+"] :" + item.toString());
+						// 삭제 상태값에 따라서 제목 다르게 보이기 
+						if(item.getStatus() == 1) {
+							item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
+						}else if(item.getStatus() == 0) {
+							item.setTitle("   ".repeat(item.getDepth())+"▶︎RE: 삭제된 글입니다.");
+							System.out.println("title : " + item.getTitle());
+						}
+						//item.setTitle("   ".repeat(item.getDepth())+"▶︎RE:"+item.getTitle());
+						notice.set(i, item);
+						System.out.println("item의 결과===>"+ item.getParNum());
+					}else {
+						System.out.println("게시글["+i+"] :" + item.toString());
+						if(item.getStatus() == 0) {
+							item.setTitle("삭제된 글입니다.");
+							notice.set(i, item);
+						}
+					}
+					
+				}
+				
+				// 공지사항을 반환한다.
+				return notice;
+	}
 
 	
 

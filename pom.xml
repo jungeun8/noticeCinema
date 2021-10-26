@@ -14,6 +14,17 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
    <dependencies>
+   <!-- 엑셀파일로 다운 -->
+    <dependency>
+	    <groupId>org.apache.poi</groupId>
+	    <artifactId>poi</artifactId>
+	    <version>4.1.2</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.poi</groupId>
+	    <artifactId>poi-ooxml</artifactId>
+	    <version>4.1.2</version>
+	</dependency>
    <!-- 첨부파일 업로드를 지원하는 라이브러리 -->
 		<dependency>
 		    <groupId>commons-fileupload</groupId>

@@ -1,6 +1,9 @@
 package com.cinemabox.dto.Notice;
 
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 
@@ -23,5 +26,5 @@ public class NoticeDetailDto {
 	private int parNo;
 	private int seq;
 	private int depth;
-
+	private List<MultipartFile> upfiles;
 }

@@ -7,6 +7,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,12 +80,14 @@ public class NoticeViewController {
 		List<Notice> noticeList = noticeService.getNoticeAll(searchData);
 		int pageAllCnt = noticeService.getPageAllCnt(searchData);
 		System.out.println("controller pageAllCnt ====>" + pageAllCnt);
+		System.out.println("검색 카운트  ====>" + searchData.getSearchCnt());
 		// 댓글 수 카운트
 //		int countComent = noticeService.getComentCnt();
 		// 뷰 페이지에 공지사항 목록 전달하기
 		model.addAttribute("noticeList", noticeList);
 		model.addAttribute("pageAllCnt", pageAllCnt);
 		model.addAttribute("page", page);
+		model.addAttribute("searchCnt", noticeList.size() > 0 ? noticeList.get(0).getSearchCnt() : 0);
 		model.addAttribute("searchWord", searchData.getSearchWord());
 		model.addAttribute("startPage", searchData.getStartPage());
 		model.addAttribute("endPage", searchData.getEndPage());
@@ -324,9 +338,56 @@ public class NoticeViewController {
 	 * @return
 	 */
 	@RequestMapping("/newModify")
-	public String newNotice(NoticeDetailDto notice, FileItem item,  RedirectAttributes redirectAttributes) {
+	public String newNotice(NoticeDetailDto notice, RedirectAttributes redirectAttributes) {
 		noticeService.changeNotice(notice);
-//		fileService.updateFile(item);
+
+
+		// 모든 첨부파일객체를 조회하기
+		List<MultipartFile> uploadFiles = notice.getUpfiles();
+		
+		// 데이터베이스에 저장할 파일아이템(FileItem)객첼 저장하는 ArrayList객체를 생성한다.
+		List<FileItem> fileItems = new ArrayList<>();
+		FileDto fileAdd = new FileDto();
+		// List에 저장된 MultipartFile를 하나씩 순회처리한다.
+		for (MultipartFile uploadFile : uploadFiles) {
+			
+			// MultipartFile객체에 첨부파일 정보가 포함되어 있는지 체크한다.
+			if (!uploadFile.isEmpty()) {
+				// 첨부파일의 이름을 조회하고, 중복을 방지하기 위해서 유닉스타임을 파일이름에 붙인다.
+//				String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
+				String filename = uploadFile.getOriginalFilename();
+				// 첨부파일의 컨텐츠 타입을 조회한다.
+				String filetype = uploadFile.getContentType();
+				// 첨부파일의 사이즈를 조회한다.
+				long filesize = uploadFile.getSize();
+				
+				// FileItem객체를 생성해서 첨부파일 정보를 저장한다.
+				FileItem fileItem = new FileItem();
+				fileItem.setFilename(filename);
+				fileItem.setFiletype(filetype);
+				fileItem.setFilesize(filesize);
+				fileItem.setFileNoticeNo(notice.getNo());
+				// 위에서 생성한 ArrayList객체에 FileItem객체를 저장한다.
+				
+				fileItems.add(fileItem);
+				
+				// 파일복사 유틸리티 클래스이 copy() 메소드를 이용해서
+				// 임시파일폴더에 저장된 첨부파일을 읽어오는 스트림과 지정된 파일폴더로 출력하는 스트림을 지정하면 첨부파일을 원하는 폴더에 저장할 수 있다.
+				try {
+					FileCopyUtils.copy(uploadFile.getInputStream(), new FileOutputStream(new File("/Users/jungeun-kim/fileFolder", filename)));
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				fileService.insertFile(fileItem);
+			}
+		}
+		
+		
 		redirectAttributes.addAttribute("no", notice.getNo());
 		return "redirect:list";
 	}
@@ -440,4 +501,68 @@ public class NoticeViewController {
 	}
 	
 	
-}
+	/**
+	 * 엑셀 다운로드
+	 * @param response
+	 * @throws IOException
+	 */
+	 @GetMapping("/excel/download")
+	    public void excelDownload(NoticeListDto searchData, HttpServletResponse response) throws IOException {
+		 List<Notice> noticeList = noticeService.getNoticeAllExcel(searchData);
+//	        Workbook wb = new HSSFWorkbook();
+	        Workbook wb = new XSSFWorkbook();
+	        Sheet sheet = wb.createSheet("첫번째 시트");
+	       
+	        Row row = null;
+	        Cell cell = null;
+	        int rowNum = 0;
+
+	        // Header
+	        row = sheet.createRow(rowNum++);
+	        cell = row.createCell(0);
+	        cell.setCellValue("번호");
+	        cell = row.createCell(1);
+	        cell.setCellValue("제목");
+	        cell = row.createCell(2);
+	        cell.setCellValue("날짜");
+
+	        CellStyle cellStyle = wb.createCellStyle();
+	        CreationHelper createHelper = wb.getCreationHelper();
+	        cellStyle.setDataFormat(
+	            createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
+	        
+	        // Body
+	        for (Notice ex : noticeList) {
+	            row = sheet.createRow(rowNum++);
+	            cell = row.createCell(0);
+	            cell.setCellValue(ex.getParNum());
+	            cell = row.createCell(1);
+	            cell.setCellValue(ex.getTitle());
+	            cell = row.createCell(2);
+	            cell.setCellValue(ex.getCreatDate());
+	            cell.setCellStyle(cellStyle);
+	        }
+
+	        // 컨텐츠 타입과 파일명 지정
+	        response.setContentType("ms-vnd/excel");
+//	        response.setHeader("Content-Disposition", "attachment;filename=example.xls");
+	        response.setHeader("Content-Disposition", "attachment;filename=noitceList.xlsx");
+
+	        // Excel File Output
+	        wb.write(response.getOutputStream());
+	        wb.close();
+	    }
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+

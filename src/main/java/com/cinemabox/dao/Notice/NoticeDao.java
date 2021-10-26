@@ -121,7 +121,12 @@ public interface NoticeDao {
 	void updateNoticeSeqMinus(int no);
 	
 	/**
-	 * 
+	 *
 	 */
 	int deleteStatus(Notice param);
+	
+	/*
+	 * 엑셀 다운로드를 위한 게시글 조회
+	 * */
+	List<Notice> getNoticeAllExcel(NoticeListDto searchData);
 }

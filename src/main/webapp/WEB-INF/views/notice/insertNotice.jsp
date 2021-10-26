@@ -21,6 +21,7 @@
 <body>
 <div class="container">
 	<%@ include file="../common/header.jsp"%>
+	
 		<div class="top" style="margin-left:150px;  margin-top:50px;">
 			<h3 >공지사항</h3>
 		</div>
@@ -36,22 +37,22 @@
 				  <textarea class="form-control" id="content" name ="content" rows="3" maxlength="1000" autofocus="autofocus"></textarea>
 				  <p id="textCount1" name="textCount1">(0 / 최대 1000자)</p>
 				</div>
-				<div class="mb-5">
-				<h6>첨부파일 등록</h6>
-					<div class="input-group mb-3">
-					  <input type="file" class="form-control" id="upfiles" name="upfiles">
-					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
-					</div>
-					<div class="input-group mb-3">
-					  <input type="file" class="form-control" id="upfiles" name="upfiles">
-					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
-					</div>
-					<div class="input-group mb-3">
-					  <input type="file" class="form-control" id="upfiles" name="upfiles">
-					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
-					</div>
-				</div>
-		
+				<!-- 파일첨부 시작 -->
+				<div class="row">
+			   <div class="col-12 d-flex justify-content-between">
+			      <span>첨부파일을 등록하세요. </span> 
+			      <span><button type="button" class="btn btn-outline-primary btn-sm">필드추가 <i class='fas fa-plus'></i></button></span>
+			   </div>
+			   <div class="col-12" id="box">
+			      <div class="mb-3">
+			         <div class="input-group">
+			            <input type="file" class="form-control" name="upfiles" aria-label="Upload">
+			            <button class="btn btn-outline-danger" type="button"><i class='fas fa-minus'></i></button>
+			         </div>
+			      </div>
+			   </div>
+			</div>
+				<!-- 파일첨부 끝 -->
 				<h5 class="mb-3">고객정보(필수입력사항입니다)</h5>
 				          <div class="row g-5" style="background: #f5f5f5;">
 				            <div class="col-sm-6">
@@ -67,6 +68,9 @@
 								</div>
 				           </div>
 						</div>
+						
+						
+						
 				<div style="text-align: right;">
 					<button type="button" class="btn btn-warning" onclick="location.href='list'">목록</button>
 					<button type="submit" id="insertBt" class="btn btn-warning"  onclick="checkForm()">등록</button>
@@ -78,9 +82,46 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type="text/javascript">
+$(".btn-outline-primary").click(function() {
+	   // id가 box인 엘리먼트에 아래 태그를 추가하기
+	  $("#box").append (
+			"<div class='mb-3'> "
+			+ "<div class='input-group'> "
+			+ "<input type='file' class='form-control' name='upfiles' aria-label='Upload'> "
+			+ "<button class='btn btn-outline-danger' type='button'><i class='fas fa-minus'></i></button> "
+			+ "</div>"
+			+ "</div>"
+	  )
+	})
+
+	$("#box").on('click', '.btn-outline-danger',function() {
+	   // 지금 클릭한 버튼의 가장 가까운 조상중에서 class가 mb-3인 엘리먼트 삭제하기
+	   $(this).prev().remove();
+	   $(this).prev().remove();
+	   $(this).prev().remove();
+	   $(this).next().remove();
+	   $(this).next().remove();
+	   $(this).remove();
+	})
 $(function() {
 	// 입력값 유효성 체크해서 전부 값이 입력되어 있을 때만 폼 입력값이 서버로 제출되게 하기
 	$("#notice-form").submit(function() {
+		/* // 파일 크기, 형식 
+		var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+		var maxSize = 5242880; //5MB
+		
+		function checkExtension(fileName, fileSize){
+			if(fileSize >= maxSize){
+				alert("파일 사이즈 초과");
+				return false;
+			}
+			
+			if(regex.test(fileName)){
+				alert("해당 종류의 파일은 업로드할 수 없습니다.");
+				return false;
+			}
+			return true;
+			// */
 		
 		var title = $("#title").val();
 		if (!title) {

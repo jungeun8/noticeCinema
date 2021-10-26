@@ -17,6 +17,15 @@
  a:link { color: black; text-decoration: none;}
  a:visited { color: black; text-decoration: none;}
  a:hover { color: #ecbd35; text-decoration: underline;}
+ 
+ // CSS
+.input-file-button{
+  padding: 6px 25px;
+  background-color:#FF6600;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -25,8 +34,8 @@
 		<div class="top" style="margin-left:150px;  margin-top:50px;">
 			<h3 >공지사항</h3>
 		</div>
-		<div style="padding:80px">
-			<form id="notice-form" name="update" action="../notice/newModify" method="post" onsubmit="return check()">
+		<form id="notice-form" name="update" action="../notice/newModify" method="post" enctype="multipart/form-data">
+			<div style="padding:80px">
 				<div class="mb-3">
 				  <label for="exampleFormControlInput1" class="form-label">제목</label>
 				 <pre style="margin:0px; overflow: auto; white-space: pre-wrap;">
@@ -55,7 +64,23 @@
 								</div>
 				           </div>
 						</div>
-					<h6>첨부파일 수정</h6>
+						<!-- 첨부파일 등록 -->
+						<div class="row">
+					   <div class="col-12 d-flex justify-content-between">
+					      <span>첨부파일을 등록하세요. </span> 
+					      <span><button type="button" class="btn btn-outline-primary btn-sm">필드추가 <i class='fas fa-plus'></i></button></span>
+					   </div>
+					   <div class="col-12" id="box">
+					      <div class="mb-3">
+					         <div class="input-group">
+					            <input type="file" class="form-control" name="upfiles" aria-label="Upload">
+					            <button class="btn btn-outline-danger" type="button"><i class='fas fa-minus'></i></button>
+					         </div>
+					      </div>
+					   </div>
+					</div>
+					<!-- 첨부파일 등록 끝 -->
+					<h6>첨부파일 삭제</h6>
 					<div class="input-group mb-3">
 						<c:forEach var="fileList" items="${fileList }">
 							<ul class="list-group" style="list-style: none;">	
@@ -65,7 +90,9 @@
 							</li>
 							</ul>
 						</c:forEach>
-					  </div><!-- 
+					  </div>
+		  	   		  
+					</div>				  <!-- 
 					  <h6>첨부파일 추가</h6>
 						<div class="input-group mb-3">
 						  <input type="file" class="form-control" id="upfiles" name="upfiles">
@@ -73,14 +100,37 @@
 						</div> -->
 				</div>
 				<div style="text-align: right;">
-	                <input type=submit value="수정" onclick="checkForm()"/>
+	               <button type="submit" onclick="checkForm()">수정</button>
 	                <input type=button value="목록" onclick="location.href='list'"/>
 	            </div>
-	   		</form>
-		</div>
+			</div>
+		</form>		
 	<%@ include file="../common/footer.jsp"%>	
 </div>
 <script type="text/javascript">
+$(".btn-outline-primary").click(function() {
+	   // id가 box인 엘리먼트에 아래 태그를 추가하기
+	  $("#box").append (
+			"<div class='mb-3'> "
+			+ "<div class='input-group'> "
+			+ "<input type='file' class='form-control' name='upfiles' aria-label='Upload'> "
+			+ "<button class='btn btn-outline-danger' type='button'><i class='fas fa-minus'></i></button> "
+			+ "</div>"
+			+ "</div>"
+	  )
+	})
+
+	$("#box").on('click', '.btn-outline-danger',function() {
+	   // 지금 클릭한 버튼의 가장 가까운 조상중에서 class가 mb-3인 엘리먼트 삭제하기
+	   $(this).prev().remove();
+	   $(this).prev().remove();
+	   $(this).prev().remove();
+	   $(this).next().remove();
+	   $(this).next().remove();
+	   $(this).remove();
+	})
+
+
 /* window.onload = function(){
 	console.log("test :",content99);
 	var a = content99;
@@ -89,12 +139,16 @@
 
 } */
 
+
 //파일 삭제 버튼을 클릭했을 때 실행된다.
-$("#delete").click(function() {
+//$("#delete").click(function() {
+$(".input-group").on('click', '#delete',function() {
+	
 	var chk = confirm("정말 삭제하시겠습니까?");
 	var fileNo = $("#fileNo").val();
+	var deleteNode = this;
 	if (chk) {
-		debugger
+
 	$.ajax({
 		type: "POST",
 		url: "/cinemabox/notice/fileDelet",
@@ -103,7 +157,11 @@ $("#delete").click(function() {
 	        alert("error");
 	    },
 		success : function(){
+			deleteNode.parentNode.parentNode.remove();
 			alert("삭제되었습니다");
+			
+	/* 		location.href = "modify"; */
+			/* location.href='confirm?no=+'no'; */
 			
 		},
 		
