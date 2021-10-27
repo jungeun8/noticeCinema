@@ -66,7 +66,7 @@
 							<c:forEach var="fileList" items="${fileList }">
 							<ul class="list-group" style="list-style: none;">	
 							<li>
-							${fileList.filename }<a style="margin:10px;" class="btn btn-warning btn-sm" href="download?no=${fileList.no }">다운로드</a>
+							${fileList.originalFilename }<a style="margin:10px;" class="btn btn-warning btn-sm" href="download?no=${fileList.no }">다운로드</a>
 							</li>
 							</ul>
 							</c:forEach>

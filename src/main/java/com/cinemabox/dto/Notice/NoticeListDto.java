@@ -17,4 +17,5 @@ public class NoticeListDto {
 	private int getFileAllCnt;
 	private int searchCnt;
 
+
 }

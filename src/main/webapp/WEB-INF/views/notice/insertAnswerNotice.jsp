@@ -39,22 +39,22 @@
 				  <textarea class="form-control" id="content" name ="content" rows="3" maxlength="1000" autofocus="autofocus"></textarea>
 				  <p id="textCount1" name="textCount1">(0 / 최대 1000자)</p>
 				</div>
-				<div class="mb-5">
-				<h6>첨부파일 등록</h6>
-				
-					<div class="input-group mb-3">
-					  <input type="file" class="form-control" id="upfiles" name="upfiles">
-					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
-					</div>
-					<div class="input-group mb-3">
-					  <input type="file" class="form-control" id="upfiles" name="upfiles">
-					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
-					</div>
-					<div class="input-group mb-3">
-					  <input type="file" class="form-control" id="upfiles" name="upfiles">
-					  <label class="input-group-text" for="inputGroupFile02">Upload</label>
-					</div>
-				</div>
+				<!-- 파일첨부 시작 -->
+				<div class="row" style=" margin-bottom: 10px;">
+			   <div class="col-12 d-flex justify-content-between">
+			      <span>첨부파일을 등록하세요. **5MB 이하 파일만 등록할 수 있습니다 / gif, jpg, jpeg, png, docx, pages 파일만 선택해 주세요** </span> 
+			      <span><button type="button" class="btn btn-outline-primary btn-sm">파일 추가 <i class='fas fa-plus'></i></button></span>
+			   </div>
+			   <div class="col-12" id="box">
+			      <div class="mb-3">
+			         <div class="input-group">
+			            <input type="file" class="form-control" name="upfiles" aria-label="Upload" onchange="checkFile(this)">
+			            <button class="btn btn-outline-danger" type="button"><i class='fas fa-minus'></i></button>
+			         </div>
+			      </div>
+			   </div>
+			</div>
+			<!-- 파일첨부 끝 -->
 				<h5 class="mb-3">고객정보(필수입력사항입니다)</h5>
 				          <div class="row g-5" style="background: #f5f5f5;">
 				            <div class="col-sm-6">
@@ -80,6 +80,46 @@
 </div>
 
 <script type="text/javascript">
+var fileAllSize = 0;
+function checkFile(el){
+	// files 로 해당 파일 정보 얻기.
+	var files = el.files;
+
+	// files[0].size 는 파일 용량 정보입니다.
+	if(files[0].size > 1024 * 1024 * 5){
+		// 용량 초과시 경고후 해당 파일의 용량도 보여줌
+		alert('5MB 이하 파일만 등록할 수 있습니다.\n\n' + '현재파일 용량 : ' + (Math.round(files[0].size /1024/ 1024 * 100) / 100) + 'MB');
+	}else if(!/\.(gif|jpg|jpeg|png|docx|pages)$/i.test(files[0].name)){
+		alert('gif, jpg, jpeg, png, docx, pages 파일만 선택해 주세요.\n\n현재 파일 : ' + files[0].name);
+	}
+
+	// 체크를 통과했다면 종료.
+	else return;
+
+	// 체크에 걸리면 선택된 내용 취소 처리를 해야함.
+	// 파일선택 폼의 내용은 스크립트로 컨트롤 할 수 없다.
+	// 새로 폼을 새로 써주는 방식으로 초기화 합니다.
+	el.outerHTML = el.outerHTML;
+}
+
+$(".btn-outline-primary").click(function() {
+	   // id가 box인 엘리먼트에 아래 태그를 추가하기
+	  $("#box").append (
+			"<div class='mb-3'> "
+			+ "<div class='input-group'> "
+			+ "<input type='file' class='form-control' name='upfiles' aria-label='Upload'> "
+			+ "<button class='btn btn-outline-danger' type='button'><i class='fas fa-minus'></i></button> "
+			+ "</div>"
+			+ "</div>"
+	  )
+	})
+
+	$("#box").on('click', '.btn-outline-danger',function() {
+	   // 지금 클릭한 버튼의 가장 가까운 조상중에서 class가 mb-3인 엘리먼트 삭제하기
+	   $(this).closest('.mb-3').remove();
+		
+	})
+	
 $(function() {
 	// 입력값 유효성 체크해서 전부 값이 입력되어 있을 때만 폼 입력값이 서버로 제출되게 하기
 	$("#notice-form").submit(function() {

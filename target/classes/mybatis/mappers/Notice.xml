@@ -66,9 +66,6 @@
 		order by notice_par_no desc
 	</select>
 	
-	
-	
-	
 	<select id="getPageAllCnt" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="int">
 		select 
 		   ceil(count(*)/10)

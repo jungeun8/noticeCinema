@@ -67,13 +67,13 @@
 						<!-- 첨부파일 등록 -->
 						<div class="row">
 					   <div class="col-12 d-flex justify-content-between">
-					      <span>첨부파일을 등록하세요. </span> 
+					      <span>첨부파일을 등록하세요. **5MB 이하 파일만 등록할 수 있습니다 / gif, jpg, jpeg, png, docx, pages 파일만 선택해 주세요** </span> 
 					      <span><button type="button" class="btn btn-outline-primary btn-sm">필드추가 <i class='fas fa-plus'></i></button></span>
 					   </div>
 					   <div class="col-12" id="box">
 					      <div class="mb-3">
 					         <div class="input-group">
-					            <input type="file" class="form-control" name="upfiles" aria-label="Upload">
+					            <input type="file" except="" class="form-control" name="upfiles" aria-label="Upload" onchange="checkFile(this)">
 					            <button class="btn btn-outline-danger" type="button"><i class='fas fa-minus'></i></button>
 					         </div>
 					      </div>
@@ -86,7 +86,7 @@
 							<ul class="list-group" style="list-style: none;">	
 							<input type="hidden" name="fileNo" id="fileNo" value="${fileList.no }">  
 							<li>
-							${fileList.filename }<a style="margin:10px;" class="btn btn-warning btn-sm" id="delete" onclick="">삭제</a>
+							${fileList.no }${fileList.originalFilename }<a style="margin:10px;" class="btn btn-warning btn-sm" id="delete" onclick="functiion()">삭제</a>
 							</li>
 							</ul>
 						</c:forEach>
@@ -108,6 +108,27 @@
 	<%@ include file="../common/footer.jsp"%>	
 </div>
 <script type="text/javascript">
+function checkFile(el){
+	// files 로 해당 파일 정보 얻기.
+	var files = el.files;
+
+	// file[0].size 는 파일 용량 정보입니다.
+	if(files[0].size > 1024 * 1024 * 5){
+		// 용량 초과시 경고후 해당 파일의 용량도 보여줌
+		alert('5MB 이하 파일만 등록할 수 있습니다.\n\n' + '현재파일 용량 : ' + (Math.round(files[0].size /1024/ 1024 * 100) / 100) + 'MB');
+	}else if(!/\.(gif|jpg|jpeg|png|docx|pages|pdf)$/i.test(files[0].name)){
+		alert('gif, jpg, jpeg, png, docx, pages, pdf 파일만 선택해 주세요.\n\n현재 파일 : ' + files[0].name);
+	}
+
+	// 체크를 통과했다면 종료.
+	else return;
+
+	// 체크에 걸리면 선택된 내용 취소 처리를 해야함.
+	// 파일선택 폼의 내용은 스크립트로 컨트롤 할 수 없습니다.
+	// 그래서 그냥 새로 폼을 새로 써주는 방식으로 초기화 합니다.
+	el.outerHTML = el.outerHTML;
+}
+
 $(".btn-outline-primary").click(function() {
 	   // id가 box인 엘리먼트에 아래 태그를 추가하기
 	  $("#box").append (
@@ -122,12 +143,13 @@ $(".btn-outline-primary").click(function() {
 
 	$("#box").on('click', '.btn-outline-danger',function() {
 	   // 지금 클릭한 버튼의 가장 가까운 조상중에서 class가 mb-3인 엘리먼트 삭제하기
-	   $(this).prev().remove();
+	   /* $(this).prev().remove();
 	   $(this).prev().remove();
 	   $(this).prev().remove();
 	   $(this).next().remove();
 	   $(this).next().remove();
-	   $(this).remove();
+	   $(this).remove(); */
+	   $(this).closest('.mb-3').remove();
 	})
 
 
@@ -143,12 +165,12 @@ $(".btn-outline-primary").click(function() {
 //파일 삭제 버튼을 클릭했을 때 실행된다.
 //$("#delete").click(function() {
 $(".input-group").on('click', '#delete',function() {
-	
 	var chk = confirm("정말 삭제하시겠습니까?");
-	var fileNo = $("#fileNo").val();
+	var fileNo = $("#fileNo").val(); 
+/* var a = document.getElementById("fileNo").value; */
+	debugger;
 	var deleteNode = this;
 	if (chk) {
-
 	$.ajax({
 		type: "POST",
 		url: "/cinemabox/notice/fileDelet",

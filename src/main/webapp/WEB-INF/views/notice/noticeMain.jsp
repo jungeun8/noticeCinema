@@ -63,9 +63,10 @@
 							<colgroup>
 								<col width="10%">
 								<col width="*">
-								<col width="15%">
-								<col width="15%">
-								<col width="10%">
+								<col width="12%">
+								<col width="12%">
+								<col width="7%">
+								<col width="8%">
 							</colgroup>
 							<thead style="background: #fbe5a5;">
 								<tr class="text-center">
@@ -73,6 +74,7 @@
 									<th>제목</th>
 									<th>등록일</th>
 									<th>작성자</th>
+									<th>파일</th>
 									<th class="text-end">조회수</th>
 								</tr>
 							</thead>
@@ -98,25 +100,32 @@
 													<c:when test="${noticeList.status == 0 }">									
 														<td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; ">
 														<pre style="margin:0px; overflow: auto; white-space: pre-wrap; color:blue"><c:out value="${noticeList.title }"/>
-														<c:choose >
+														<%-- <c:choose >
 														<c:when test="${noticeList.getFileAllCnt > 0 }">
 														<img src="/resources/images/notice/파일다운.png" width="17px"height="17px">
 														</c:when>
-														</c:choose></pre></td>
+														</c:choose> --%></pre></td>
 													</c:when>
 													<c:when test="${noticeList.status == 1 }"><td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; "><a href="detail?no=${noticeList.no }">
 													<pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.title }"/>
-														<c:choose >
+														<%-- <c:choose >
 														<c:when test="${noticeList.getFileAllCnt> 0 }">
 														<img src="/resources/images/notice/파일다운.png" width="17px"height="17px">
 														</c:when>
 														</c:choose>
 													<c:choose ><c:when test="${noticeList.anwserCount != 0 }">(${noticeList.anwserCount })</c:when>
-													<c:otherwise></c:otherwise></c:choose></pre></a></td></c:when>
+													<c:otherwise></c:otherwise></c:choose> --%></pre></a></td></c:when>
 											</c:choose>
 											<!-- 제목 끝 -->
-										<td class="text-center"><fmt:formatDate value="${noticeList.creatDate }" pattern="yyyy.MM.dd"/></td>
+										<td class="text-center"><fmt:formatDate value="${noticeList.creatDate }" pattern="yy.MM.dd"/></td>
 										<td class="text-center"><pre style="margin:0px; overflow: auto; white-space: pre-wrap;"><c:out value="${noticeList.noticeId }"/></pre></td>
+										<td class="text-center">
+										<c:choose >
+											<c:when test="${noticeList.getFileAllCnt> 0 }">
+												📮
+											</c:when><c:otherwise></c:otherwise>
+										</c:choose>
+										</td>
 										<td class="text-end">${noticeList.hits }</td>
 										
 									</tr>
@@ -124,7 +133,6 @@
 							</tbody>
 						</table>
 					</div>
-				<img src="/resources/images/notice/파일다운로드.png" width="17px"height="17px">
 					<div style="text-align: right;">
 						<button type="button" class="btn btn-warning" onclick="location.href='list'">목록</button>
 						<button type="button" class="btn btn-warning" onclick="location.href='add'">글쓰기</button>

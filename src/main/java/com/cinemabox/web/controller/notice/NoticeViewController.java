@@ -195,8 +195,8 @@ public class NoticeViewController {
 					// MultipartFile객체에 첨부파일 정보가 포함되어 있는지 체크한다.
 					if (!uploadFile.isEmpty()) {
 						// 첨부파일의 이름을 조회하고, 중복을 방지하기 위해서 유닉스타임을 파일이름에 붙인다.
-//						String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
-						String filename = uploadFile.getOriginalFilename();
+						String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
+//						String filename = uploadFile.getOriginalFilename();
 						// 첨부파일의 컨텐츠 타입을 조회한다.
 						String filetype = uploadFile.getContentType();
 						// 첨부파일의 사이즈를 조회한다.
@@ -254,8 +254,8 @@ public class NoticeViewController {
 					// MultipartFile객체에 첨부파일 정보가 포함되어 있는지 체크한다.
 					if (!uploadFile.isEmpty()) {
 						// 첨부파일의 이름을 조회하고, 중복을 방지하기 위해서 유닉스타임을 파일이름에 붙인다.
-//						String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
-						String filename = uploadFile.getOriginalFilename();
+						String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
+//						String filename = uploadFile.getOriginalFilename();
 						// 첨부파일의 컨텐츠 타입을 조회한다.
 						String filetype = uploadFile.getContentType();
 						// 첨부파일의 사이즈를 조회한다.
@@ -325,6 +325,7 @@ public class NoticeViewController {
 	 */
 	@RequestMapping("/modify")
 	public String modifyNotice(Notice list, Model model) throws Exception{
+		FileItem fileItem = fileService.getFilesNo(list.getNo());
 		Notice noticeDetail = noticeService.getModifyNotice(list);
 		model.addAttribute("noticeDetail", noticeDetail);
 		model.addAttribute("fileList", fileService.getAllFiles(list.getNo()));
@@ -354,8 +355,8 @@ public class NoticeViewController {
 			// MultipartFile객체에 첨부파일 정보가 포함되어 있는지 체크한다.
 			if (!uploadFile.isEmpty()) {
 				// 첨부파일의 이름을 조회하고, 중복을 방지하기 위해서 유닉스타임을 파일이름에 붙인다.
-//				String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
-				String filename = uploadFile.getOriginalFilename();
+				String filename = System.currentTimeMillis() + uploadFile.getOriginalFilename();
+	//			String filename = uploadFile.getOriginalFilename();
 				// 첨부파일의 컨텐츠 타입을 조회한다.
 				String filetype = uploadFile.getContentType();
 				// 첨부파일의 사이즈를 조회한다.
@@ -490,10 +491,10 @@ public class NoticeViewController {
 		FileItem fileItem = fileService.getFilesNo(itemNo);
 		
 		// ModelAndView의 Model에 디렉토리경로와 파일명을 저장한다.
-		mav.addObject("directory", "/Users/jungeun-kim/fileDownFolder");
+		mav.addObject("directory", "/Users/jungeun-kim/fileFolder");
 		mav.addObject("filename", fileItem.getFilename());
 		// 파일에 유닉스 타입없애기
-//		mav.addObject("originalFilename", fileItem.getOriginalFilname());
+		mav.addObject("originalFilename", fileItem.getOriginalFilname());
 		// 파일을 다은로드하는View객체를 ModelAndView 저장한다.
 		mav.setView(downloadView);		
 		
@@ -525,11 +526,13 @@ public class NoticeViewController {
 	        cell.setCellValue("제목");
 	        cell = row.createCell(2);
 	        cell.setCellValue("날짜");
+	        cell = row.createCell(3);
+	        cell.setCellValue("작성자");
 
 	        CellStyle cellStyle = wb.createCellStyle();
 	        CreationHelper createHelper = wb.getCreationHelper();
 	        cellStyle.setDataFormat(
-	            createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
+	            createHelper.createDataFormat().getFormat("yy-mm-dd"));
 	        
 	        // Body
 	        for (Notice ex : noticeList) {
@@ -541,6 +544,9 @@ public class NoticeViewController {
 	            cell = row.createCell(2);
 	            cell.setCellValue(ex.getCreatDate());
 	            cell.setCellStyle(cellStyle);
+	            cell = row.createCell(3);
+	            cell.setCellValue(ex.getNoticeId());
+	            
 	        }
 
 	        // 컨텐츠 타입과 파일명 지정
@@ -552,6 +558,7 @@ public class NoticeViewController {
 	        wb.write(response.getOutputStream());
 	        wb.close();
 	    }
+	 
 	}
 	
 	

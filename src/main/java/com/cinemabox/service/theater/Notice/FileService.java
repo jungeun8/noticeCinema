@@ -12,7 +12,7 @@ public interface FileService {
 	// 파일 조회 전체
 	void updateFile(FileItem attachmentFile);
 	// 파일 수정 
-	void deleteFile(int l);
+	void deleteFile(int no);
 	// 파일 조회
 	FileItem getFilesNo(int no);
 	// 번호로 파일 조회 

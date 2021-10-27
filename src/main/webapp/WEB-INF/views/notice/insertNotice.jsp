@@ -38,15 +38,15 @@
 				  <p id="textCount1" name="textCount1">(0 / 최대 1000자)</p>
 				</div>
 				<!-- 파일첨부 시작 -->
-				<div class="row">
+				<div class="row" style=" margin-bottom: 10px;">
 			   <div class="col-12 d-flex justify-content-between">
-			      <span>첨부파일을 등록하세요. </span> 
-			      <span><button type="button" class="btn btn-outline-primary btn-sm">필드추가 <i class='fas fa-plus'></i></button></span>
+			      <span>첨부파일을 등록하세요. **5MB 이하 파일만 등록할 수 있습니다 / gif, jpg, jpeg, png, docx, pages, pdf 파일만 선택해 주세요** </span> 
+			      <span><button type="button" class="btn btn-outline-primary btn-sm">파일 추가 <i class='fas fa-plus'></i></button></span>
 			   </div>
 			   <div class="col-12" id="box">
-			      <div class="mb-3">
+			      <div class="mb-3 upfileChk">
 			         <div class="input-group">
-			            <input type="file" class="form-control" name="upfiles" aria-label="Upload">
+			            <input type="file" class="form-control multi" name="upfiles" aria-label="Upload" onchange="checkFile(this)">
 			            <button class="btn btn-outline-danger" type="button"><i class='fas fa-minus'></i></button>
 			         </div>
 			      </div>
@@ -82,7 +82,36 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type="text/javascript">
+function checkFile(el){
+	// files 로 해당 파일 정보 얻기.
+	var files = el.files;
+
+	// files[0].size 는 파일 용량 정보입니다.
+	if(files[0].size > 1024 * 1024 * 5){
+		// 용량 초과시 경고후 해당 파일의 용량도 보여줌
+		alert('5MB 이하 파일만 등록할 수 있습니다.\n\n' + '현재파일 용량 : ' + (Math.round(files[0].size /1024/ 1024 * 100) / 100)+'MB');
+	}else if(!/\.(gif|jpg|jpeg|png|docx|pages|pdf)$/i.test(files[0].name)){
+		alert('gif, jpg, jpeg, png, docx, pages, pdf 파일만 선택해 주세요.\n\n현재 파일 : ' + files[0].name);
+	}
+
+	// 체크를 통과했다면 종료.
+	else return;
+
+	// 체크에 걸리면 선택된 내용 취소 처리를 해야함.
+	// 파일선택 폼의 내용은 스크립트로 컨트롤 할 수 없다.
+	// 새로 폼을 새로 써주는 방식으로 초기화 합니다.
+	el.outerHTML = el.outerHTML;
+}
+
+
 $(".btn-outline-primary").click(function() {
+	var n = $(".upfileChk").lenght;
+    if (n>5) {
+    	debugger;
+        alert('5개까지만 올릴 수 있습니다.');
+       
+        }
+	 
 	   // id가 box인 엘리먼트에 아래 태그를 추가하기
 	  $("#box").append (
 			"<div class='mb-3'> "
@@ -96,33 +125,19 @@ $(".btn-outline-primary").click(function() {
 
 	$("#box").on('click', '.btn-outline-danger',function() {
 	   // 지금 클릭한 버튼의 가장 가까운 조상중에서 class가 mb-3인 엘리먼트 삭제하기
-	   $(this).prev().remove();
+	   /* $(this).prev().remove();
 	   $(this).prev().remove();
 	   $(this).prev().remove();
 	   $(this).next().remove();
 	   $(this).next().remove();
-	   $(this).remove();
+	   $(this).next().remove();
+	   $(this).remove(); */
+	   $(this).closest('.mb-3').remove();
+		
 	})
 $(function() {
 	// 입력값 유효성 체크해서 전부 값이 입력되어 있을 때만 폼 입력값이 서버로 제출되게 하기
 	$("#notice-form").submit(function() {
-		/* // 파일 크기, 형식 
-		var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
-		var maxSize = 5242880; //5MB
-		
-		function checkExtension(fileName, fileSize){
-			if(fileSize >= maxSize){
-				alert("파일 사이즈 초과");
-				return false;
-			}
-			
-			if(regex.test(fileName)){
-				alert("해당 종류의 파일은 업로드할 수 없습니다.");
-				return false;
-			}
-			return true;
-			// */
-		
 		var title = $("#title").val();
 		if (!title) {
 			alert("제목을 입력해주세요.");

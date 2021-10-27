@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cinemabox.dao.Notice.AnswerDao;
+import com.cinemabox.dao.Notice.FileItemDao;
 import com.cinemabox.dao.Notice.NoticeDao;
 import com.cinemabox.dto.Notice.NoticeAnswerDto;
 import com.cinemabox.dto.Notice.NoticeDetailDto;
 import com.cinemabox.dto.Notice.NoticeDto;
 import com.cinemabox.dto.Notice.NoticeListDto;
 import com.cinemabox.dto.Notice.NoticeSeqDto;
+import com.cinemabox.vo.FileItem;
 import com.cinemabox.vo.Notice;
 
 
@@ -23,6 +25,7 @@ public class NoticeServiceImpl implements NoticeService {
 
 	@Autowired NoticeDao noticeDao;
 	@Autowired AnswerDao answerDao;
+	@Autowired FileItemDao fileDao;
 	
 	@Override
 	public List<Notice> getNoticeAll(NoticeListDto searchData){
@@ -67,7 +70,14 @@ public class NoticeServiceImpl implements NoticeService {
 	
 	@Override
 	public NoticeDetailDto detailNoticeByNo(int no) {
-		// 공지사항 상세 조회 
+		// 공지사항 상세 조회
+		List<FileItem> item = fileDao.getAllFiles(no);
+		for(int i=0; i<item.size(); i++) {
+			FileItem file = item.get(i);
+			file.setFilesize((Math.round(file.getFilesize() /1024/ 1024 * 100) / 100));
+			
+		}
+		
 		return noticeDao.getDetailNoticeByNo(no) ;
 	}
 	
