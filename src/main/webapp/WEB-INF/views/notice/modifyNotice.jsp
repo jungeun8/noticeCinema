@@ -84,9 +84,9 @@
 					<div class="input-group mb-3">
 						<c:forEach var="fileList" items="${fileList }">
 							<ul class="list-group" style="list-style: none;">	
-							<input type="hidden" name="fileNo" id="fileNo" value="${fileList.no }">  
 							<li>
-							${fileList.no }${fileList.originalFilename }<a style="margin:10px;" class="btn btn-warning btn-sm" id="delete" onclick="functiion()">삭제</a>
+							<input type="hidden" name="fileNo" id="fileNo" class="fileNo" value="${fileList.no }">  
+							${fileList.originalFilename }<a style="margin:10px;" class="btn btn-warning btn-sm" id="delete" onclick="">삭제</a>
 							</li>
 							</ul>
 						</c:forEach>
@@ -111,7 +111,6 @@
 function checkFile(el){
 	// files 로 해당 파일 정보 얻기.
 	var files = el.files;
-
 	// file[0].size 는 파일 용량 정보입니다.
 	if(files[0].size > 1024 * 1024 * 5){
 		// 용량 초과시 경고후 해당 파일의 용량도 보여줌
@@ -166,7 +165,7 @@ $(".btn-outline-primary").click(function() {
 //$("#delete").click(function() {
 $(".input-group").on('click', '#delete',function() {
 	var chk = confirm("정말 삭제하시겠습니까?");
-	var fileNo = $("#fileNo").val(); 
+	var fileNo = this.parentElement.children[0].value;
 /* var a = document.getElementById("fileNo").value; */
 	debugger;
 	var deleteNode = this;
@@ -174,7 +173,7 @@ $(".input-group").on('click', '#delete',function() {
 	$.ajax({
 		type: "POST",
 		url: "/cinemabox/notice/fileDelet",
-		data: {fileNo: $("#fileNo").val()},
+		data: {fileNo},
 		error : function(error) {
 	        alert("error");
 	    },
@@ -199,7 +198,6 @@ $(".input-group").on('click', '#delete',function() {
 
 $(function() {
 	$("#notice-form").submit(function() {
-		
 		var title = $("#title").val();
 		if (!title) {
 			alert("제목을 입력해주세요.");

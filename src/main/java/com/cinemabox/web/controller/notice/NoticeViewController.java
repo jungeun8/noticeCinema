@@ -507,9 +507,12 @@ public class NoticeViewController {
 	 * @param response
 	 * @throws IOException
 	 */
-	 @GetMapping("/excel/download")
+	 @GetMapping("/excel")
 	    public void excelDownload(NoticeListDto searchData, HttpServletResponse response) throws IOException {
 		 List<Notice> noticeList = noticeService.getNoticeAllExcel(searchData);
+		 for (Notice a : noticeList) {
+		 System.out.println("엑셀 값!!!====>"+ searchData.getSearchWord());
+		 }
 //	        Workbook wb = new HSSFWorkbook();
 	        Workbook wb = new XSSFWorkbook();
 	        Sheet sheet = wb.createSheet("첫번째 시트");
@@ -528,6 +531,10 @@ public class NoticeViewController {
 	        cell.setCellValue("날짜");
 	        cell = row.createCell(3);
 	        cell.setCellValue("작성자");
+	        cell = row.createCell(4);
+	        cell.setCellValue("파일");
+	        cell = row.createCell(5);
+	        cell.setCellValue("조회수");
 
 	        CellStyle cellStyle = wb.createCellStyle();
 	        CreationHelper createHelper = wb.getCreationHelper();
@@ -546,6 +553,10 @@ public class NoticeViewController {
 	            cell.setCellStyle(cellStyle);
 	            cell = row.createCell(3);
 	            cell.setCellValue(ex.getNoticeId());
+	            cell = row.createCell(4);
+	            cell.setCellValue(ex.getGetFileAllCnt());
+	            cell = row.createCell(5);
+	            cell.setCellValue(ex.getHits());
 	            
 	        }
 

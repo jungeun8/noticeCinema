@@ -241,7 +241,7 @@
 	</select>
 	
 	<select id="getNoticeAllExcel" parameterType="com.cinemabox.dto.Notice.NoticeListDto" resultType="com.cinemabox.vo.Notice">
-	  select 
+	 select 
    			A.num,
 		    A.no,
 		    A.division,
@@ -291,6 +291,7 @@
                 from cinemabox_notice 
             ) C
              on (A.parNo = C.notice_no)
+		
 	</select>
 	
 	

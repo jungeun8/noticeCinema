@@ -54,6 +54,11 @@
 		     				 <input class="form-control me-2 " type="search" id="searchWord" name="searchWord" value="${searchWord }" placeholder="제목을 검색해주세요" aria-label="Search">
 		     				 <button class="btn btn-outline-dark" style="width: 100px;" onclick="serch_click()">검색</button>
 		    			</form>
+		    			<form class="d-flex"id="excel" method="get" action="../notice/excel">
+							<button style="text-align: right;" class="btn btn-warning"  onclick="">엑셀</button>
+							<input type="hidden" id="searchWord" name="searchWord" value="${searchWord }">
+							<%-- <button type="submit" class="btn btn-warning" onclick="location.href='excel/download?searchData=${searchWord }'">엑셀로 내려받기</button> --%>
+						</form>
 		    			<%-- div>(총: ${searchCnt }개)</div> --%>
 		  			</div>
 				</nav>
@@ -134,9 +139,9 @@
 						</table>
 					</div>
 					<div style="text-align: right;">
+					
 						<button type="button" class="btn btn-warning" onclick="location.href='list'">목록</button>
 						<button type="button" class="btn btn-warning" onclick="location.href='add'">글쓰기</button>
-						<button type="submit" class="btn btn-warning" onclick="location.href='excel/download?searchData=${searchWord }'">엑셀로 내려받기</button>
 					</div>	
 					<div style="margin-left: 30%; margin-top: 15px;"> 
 						<nav aria-label="Page navigation example">
@@ -192,6 +197,11 @@ $(function() {
 			alert("검색어를 한글자 이상 입력해주세요");
 	    	  return false;
 			}
+	});		
+})
+$(function() {
+	$("#excel").submit(function() {
+	var searchWord = $("#excel").val();
 	});		
 })
 </script>

@@ -15,6 +15,7 @@
 			cinemabox_file
 		where
 			file_noticeno = #{fileNoticeNo}
+			order by file_no 
 		
 	</select>
 	
