@@ -38,7 +38,7 @@
 				  <p id="textCount1" name="textCount1">(0 / 최대 1000자)</p>
 				</div>
 				<!-- 파일첨부 시작 -->
-				<div class="row" style=" margin-bottom: 10px;">
+				<div class="row file-down" style=" margin-bottom: 10px;">
 			   <div class="col-12 d-flex justify-content-between">
 			      <span>첨부파일을 등록하세요. **5MB 이하 파일만 등록할 수 있습니다 / gif, jpg, jpeg, png, docx, pages, pdf 파일만 선택해 주세요** </span> 
 			      <span><button type="button" class="btn btn-outline-primary btn-sm">파일 추가 <i class='fas fa-plus'></i></button></span>
@@ -82,18 +82,21 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type="text/javascript">
-function checkFile(el){
+$(".file-down").on('change','input[type="file"]',function(el){
+/* function checkFile(el){ */
 	// files 로 해당 파일 정보 얻기.
-	var files = el.files;
-
+	var files = event.target.files[0];
 	// files[0].size 는 파일 용량 정보입니다.
-	if(files[0].size > 1024 * 1024 * 5){
+	if(files.size > 1024 * 1024 * 5){
 		// 용량 초과시 경고후 해당 파일의 용량도 보여줌
-		alert('5MB 이하 파일만 등록할 수 있습니다.\n\n' + '현재파일 용량 : ' + (Math.round(files[0].size /1024/ 1024 * 100) / 100)+'MB');
-	}else if(!/\.(gif|jpg|jpeg|png|docx|pages|pdf)$/i.test(files[0].name)){
-		alert('gif, jpg, jpeg, png, docx, pages, pdf 파일만 선택해 주세요.\n\n현재 파일 : ' + files[0].name);
+		alert('5MB 이하 파일만 등록할 수 있습니다.\n\n' + '현재파일 용량 : ' + (Math.round(files.size /1024/ 1024 * 100) / 100)+'MB');
+		$(this).val("");
+		return false;
+	}else if(!/\.(gif|jpg|jpeg|png|docx|pages|pdf)$/i.test(files.name)){
+		alert('gif, jpg, jpeg, png, docx, pages, pdf 파일만 선택해 주세요.\n\n현재 파일 : ' + files.name);
+		$(this).val("");
+		return false;
 	}
-
 	// 체크를 통과했다면 종료.
 	else return;
 
@@ -101,7 +104,7 @@ function checkFile(el){
 	// 파일선택 폼의 내용은 스크립트로 컨트롤 할 수 없다.
 	// 새로 폼을 새로 써주는 방식으로 초기화 합니다.
 	el.outerHTML = el.outerHTML;
-}
+})
 
 
 $(".btn-outline-primary").click(function() {

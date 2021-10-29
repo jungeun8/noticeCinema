@@ -542,11 +542,15 @@ public class NoticeViewController {
 	            createHelper.createDataFormat().getFormat("yy-mm-dd"));
 	        
 	        // Body
+	        int a = 0;
+	        for (Notice ex : noticeList) {
+	        a = ex.getSearchCnt();
+	        }
 	        for (Notice ex : noticeList) {
 	            row = sheet.createRow(rowNum++);
 	            cell = row.createCell(0);
-	            cell.setCellValue(ex.getParNum());
-	            cell = row.createCell(1);
+	            cell.setCellValue(a--);
+		        cell = row.createCell(1);          
 	            cell.setCellValue(ex.getTitle());
 	            cell = row.createCell(2);
 	            cell.setCellValue(ex.getCreatDate());
