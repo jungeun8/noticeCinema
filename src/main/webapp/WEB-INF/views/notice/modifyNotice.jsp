@@ -65,7 +65,7 @@
 				           </div>
 						</div>
 						<!-- 첨부파일 등록 -->
-						<div class="row">
+						<div class="row file-down">
 					   <div class="col-12 d-flex justify-content-between">
 					      <span>첨부파일을 등록하세요. **5MB 이하 파일만 등록할 수 있습니다 / gif, jpg, jpeg, png, docx, pages 파일만 선택해 주세요** </span> 
 					      <span><button type="button" class="btn btn-outline-primary btn-sm">필드추가 <i class='fas fa-plus'></i></button></span>
@@ -108,25 +108,29 @@
 	<%@ include file="../common/footer.jsp"%>	
 </div>
 <script type="text/javascript">
-function checkFile(el){
-	// files 로 해당 파일 정보 얻기.
-	var files = el.files;
-	// file[0].size 는 파일 용량 정보입니다.
-	if(files[0].size > 1024 * 1024 * 5){
-		// 용량 초과시 경고후 해당 파일의 용량도 보여줌
-		alert('5MB 이하 파일만 등록할 수 있습니다.\n\n' + '현재파일 용량 : ' + (Math.round(files[0].size /1024/ 1024 * 100) / 100) + 'MB');
-	}else if(!/\.(gif|jpg|jpeg|png|docx|pages|pdf)$/i.test(files[0].name)){
-		alert('gif, jpg, jpeg, png, docx, pages, pdf 파일만 선택해 주세요.\n\n현재 파일 : ' + files[0].name);
-	}
+$(".file-down").on('change','input[type="file"]',function(el){
+	/* function checkFile(el){ */
+		// files 로 해당 파일 정보 얻기.
+		var files = event.target.files[0];
+		// files[0].size 는 파일 용량 정보입니다.
+		if(files.size > 1024 * 1024 * 5){
+			// 용량 초과시 경고후 해당 파일의 용량도 보여줌
+			alert('5MB 이하 파일만 등록할 수 있습니다.\n\n' + '현재파일 용량 : ' + (Math.round(files.size /1024/ 1024 * 100) / 100)+'MB');
+			$(this).val("");
+			return false;
+		}else if(!/\.(gif|jpg|jpeg|png|docx|pages|pdf)$/i.test(files.name)){
+			alert('gif, jpg, jpeg, png, docx, pages, pdf 파일만 선택해 주세요.\n\n현재 파일 : ' + files.name);
+			$(this).val("");
+			return false;
+		}
+		// 체크를 통과했다면 종료.
+		else return;
 
-	// 체크를 통과했다면 종료.
-	else return;
-
-	// 체크에 걸리면 선택된 내용 취소 처리를 해야함.
-	// 파일선택 폼의 내용은 스크립트로 컨트롤 할 수 없습니다.
-	// 그래서 그냥 새로 폼을 새로 써주는 방식으로 초기화 합니다.
-	el.outerHTML = el.outerHTML;
-}
+		// 체크에 걸리면 선택된 내용 취소 처리를 해야함.
+		// 파일선택 폼의 내용은 스크립트로 컨트롤 할 수 없다.
+		// 새로 폼을 새로 써주는 방식으로 초기화 합니다.
+		el.outerHTML = el.outerHTML;
+	})
 
 $(".btn-outline-primary").click(function() {
 	   // id가 box인 엘리먼트에 아래 태그를 추가하기
